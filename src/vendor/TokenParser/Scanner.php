@@ -142,7 +142,7 @@
                     break;
                 case "\t":
                     $this->point->x += 4;
-                    $this->point->idx += 3;
+//                    $this->point->idx++;
                     break;
                 default:
                     $this->point->x++;
