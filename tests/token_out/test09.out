@@ -1,0 +1,22 @@
+|program            |WORD-SYMBOL        |program            |1:1                |
+|p1                 |IDENTIFIER         |p1                 |1:9                |
+|;                  |DELIMITER          |;                  |1:11               |
+|begin              |WORD-SYMBOL        |begin              |2:1                |
+|a                  |IDENTIFIER         |a                  |3:5                |
+|:=                 |OPERATOR           |:=                 |3:7                |
+|123                |UNSIGNED INTEGER   |123                |3:10               |
+|;                  |DELIMITER          |;                  |3:13               |
+|a                  |IDENTIFIER         |a                  |4:5                |
+|:=                 |OPERATOR           |:=                 |4:7                |
+|223                |UNSIGNED INTEGER   |223                |4:10               |
+|-                  |OPERATOR           |-                  |4:14               |
+|a                  |IDENTIFIER         |a                  |4:16               |
+|;                  |DELIMITER          |;                  |4:17               |
+|a                  |IDENTIFIER         |a                  |5:5                |
+|:=                 |OPERATOR           |:=                 |5:7                |
+|412                |UNSIGNED INTEGER   |412                |5:10               |
+|-                  |OPERATOR           |-                  |5:13               |
+|a                  |IDENTIFIER         |a                  |5:14               |
+|;                  |DELIMITER          |;                  |5:15               |
+|end                |WORD-SYMBOL        |end                |6:1                |
+|.                  |OPERATOR           |.                  |6:4                |

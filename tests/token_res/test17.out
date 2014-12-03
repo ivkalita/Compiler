@@ -1,0 +1,5 @@
+Token parser exception:
+Position:1:4
+Text:"123.+"
+Expected: <DIGIT>
+Found:+

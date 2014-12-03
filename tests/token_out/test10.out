@@ -1,0 +1,5 @@
+Token parser exception:
+Position:1:8
+Text:"123s"
+Expected: <DIGIT> or <TERMINAL> or <.> or <e>
+Found:s

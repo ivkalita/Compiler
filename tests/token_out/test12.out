@@ -1,0 +1,44 @@
+|program            |WORD-SYMBOL        |program            |1:1                |
+|t12                |IDENTIFIER         |t12                |1:9                |
+|;                  |DELIMITER          |;                  |1:12               |
+|begin              |WORD-SYMBOL        |begin              |2:1                |
+|a                  |IDENTIFIER         |a                  |3:5                |
+|:=                 |OPERATOR           |:=                 |3:7                |
+|1e10               |UNSIGNED REAL E    |1e10               |3:10               |
+|;                  |DELIMITER          |;                  |3:14               |
+|a                  |IDENTIFIER         |a                  |4:5                |
+|:=                 |OPERATOR           |:=                 |4:7                |
+|1                  |UNSIGNED INTEGER   |1                  |4:10               |
+|;                  |DELIMITER          |;                  |4:11               |
+|a                  |IDENTIFIER         |a                  |5:5                |
+|:=                 |OPERATOR           |:=                 |5:7                |
+|+                  |OPERATOR           |+                  |5:10               |
+|100                |UNSIGNED INTEGER   |100                |5:11               |
+|;                  |DELIMITER          |;                  |5:14               |
+|a                  |IDENTIFIER         |a                  |6:5                |
+|:=                 |OPERATOR           |:=                 |6:7                |
+|-                  |OPERATOR           |-                  |6:10               |
+|0.1                |UNSIGNED REAL      |0.1                |6:11               |
+|;                  |DELIMITER          |;                  |6:14               |
+|a                  |IDENTIFIER         |a                  |7:5                |
+|:=                 |OPERATOR           |:=                 |7:7                |
+|5e-3               |UNSIGNED REAL E    |5e-3               |7:10               |
+|;                  |DELIMITER          |;                  |7:14               |
+|a                  |IDENTIFIER         |a                  |8:5                |
+|:=                 |OPERATOR           |:=                 |8:7                |
+|87.35e+8           |UNSIGNED REAL E    |87.35e+8           |8:10               |
+|;                  |DELIMITER          |;                  |8:18               |
+|a                  |IDENTIFIER         |a                  |9:5                |
+|:=                 |OPERATOR           |:=                 |9:7                |
+|+                  |OPERATOR           |+                  |9:10               |
+|87.35e+8           |UNSIGNED REAL E    |87.35e+8           |9:11               |
+|;                  |DELIMITER          |;                  |9:19               |
+|a                  |IDENTIFIER         |a                  |10:5               |
+|:=                 |OPERATOR           |:=                 |10:7               |
+|-                  |OPERATOR           |-                  |10:10              |
+|87.35e+8           |UNSIGNED REAL E    |87.35e+8           |10:11              |
+|;                  |DELIMITER          |;                  |10:19              |
+|asdfasdfasdfasdfasdfasdfasdf |IDENTIFIER         |asdfasdfasdfasdfasdfasdfasdf |11:5               |
+|;                  |DELIMITER          |;                  |11:33              |
+|end                |WORD-SYMBOL        |end                |12:1               |
+|.                  |OPERATOR           |.                  |12:4               |

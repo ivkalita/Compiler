@@ -1,0 +1,2 @@
+ //semicolon after comment
+;

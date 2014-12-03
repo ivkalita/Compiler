@@ -1,0 +1,15 @@
+|a                  |IDENTIFIER         |a                  |1:1                |
+|b                  |IDENTIFIER         |b                  |1:3                |
+|an                 |IDENTIFIER         |an                 |1:5                |
+|ab                 |IDENTIFIER         |ab                 |1:8                |
+|and                |WORD-SYMBOL        |and                |1:11               |
+|anb                |IDENTIFIER         |anb                |1:15               |
+|and2               |IDENTIFIER         |and2               |1:19               |
+|ar                 |IDENTIFIER         |ar                 |1:24               |
+|arr                |IDENTIFIER         |arr                |1:27               |
+|arb                |IDENTIFIER         |arb                |2:1                |
+|arra               |IDENTIFIER         |arra               |2:5                |
+|arrb               |IDENTIFIER         |arrb               |2:10               |
+|array              |WORD-SYMBOL        |array              |2:15               |
+|arrab              |IDENTIFIER         |arrab              |2:21               |
+|array1             |IDENTIFIER         |array1             |2:27               |
