@@ -170,6 +170,11 @@
             return $this->currentToken;
         }
 
+        public function nget()
+        {
+            self::next();
+            return self::get();
+        }
         public function next()
         {
             $this->currentToken = NULL;
@@ -185,6 +190,7 @@
                 switch ($state) {
                     case self::INIT:
                         if ($this->EOF()) {
+                            $this->currentToken = new Token(Token::EOF, '', '', $this->point);
                             return false;
                         }
                         if (ctype_alpha($c)) {
@@ -204,7 +210,8 @@
                                 $value .= $this->nextChar();
                                 $text .= $c;
                                 $state = self::SIGN;
-                                break;
+                                $this->currentToken = new Token(Token::OPERATOR, $c, $text, $this->point);
+                                return true;
                             case "'":
                                 $text .= $this->nextChar();
                                 $state = self::STR_NOT_FINAL;
@@ -275,7 +282,7 @@
                             $state = self::STR_NOT_FINAL;
                             break;
                         }
-                        throw new TokenException($this->point, $text, ["<'>", "<TERINAL>"], $c);
+                        throw new TokenException($this->point, $text, ["<'>", "<TERMINAL>"], $c);
                         break;
                     case self::SIGN:
                         if ($this->EOF()) {

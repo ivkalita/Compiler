@@ -13,6 +13,7 @@
     {
         const TOKEN_EXCEPTION = "Token parser exception";
         const BASE_EXCEPTION = "Unknown exception";
+        const SYNTAX_EXCEPTION = "Syntax parser exception";
         protected $module;
         protected $point;
         protected $text;

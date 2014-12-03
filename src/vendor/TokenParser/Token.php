@@ -16,9 +16,11 @@
         const SIGNED_REAL       = "SIGNED REAL";
         const SIGNED_REAL_E     = "SIGNED REAL E";
         const CHARACTER_STRING  = "CHARACTER STRING";
+        const EOF               = "END OF FILE";
         protected $value;
-        protected $point;
-        protected $text;
+        public $point;
+        public $text;
+        public $type;
 
         public function __construct($type, $value, $text, $point)
         {
@@ -29,7 +31,18 @@
             $this->point->x = $this->point->x - strlen($text) + 1;
         }
 
+        public function setValue($value)
+        {
+            $this->value = $value;
+            return $this;
+        }
+
         public function getMessage()
+        {
+            return $this->value;
+        }
+
+        public function getValue()
         {
             return $this->value;
         }
@@ -57,4 +70,124 @@
             $str .= "|\n";
             return $str;
         }
+
+        public function __toString()
+        {
+            return $this->type;
+        }
+
+        public function isSigned()
+        {
+            return
+                !is_null($this->type) &&
+                in_array($this->type, [self::SIGNED_INTEGER,
+                                       self::SIGNED_REAL,
+                                       self::SIGNED_REAL_E]);
+        }
+
+        public function isAdditive()
+        {
+            return
+                $this->isSigned() ||
+                (
+                    $this->type === Token::OPERATOR &&
+                    in_array($this->value, ['-', '+'])
+                );
+        }
+
+        public function getOperation()
+        {
+            if ($this->isSigned()) {
+                return $this->value[0];
+            } else {
+                throw new \Exception("Fatal error! Token::getOperation with value <{$this->value}>.");
+            }
+        }
+
+        public function isFinal()
+        {
+            return $this->type === Token::DELIMITER || $this->type === Token::EOF;
+        }
+
+        public function isRBracket()
+        {
+            return $this->type === Token::OPERATOR && $this->value == ')';
+        }
+
+        public function isLBracket()
+        {
+            return $this->type === Token::OPERATOR && $this->value == '(';
+        }
+
+        public function isMultOperation()
+        {
+            return $this->type === Token::OPERATOR &&
+                   in_array($this->value, ['*', '/']);
+        }
+
+        public function isUnSignedConst()
+        {
+            return
+                in_array(
+                    $this->type,
+                    [
+                        Token::UNSIGNED_INTEGER,
+                        Token::UNSIGNED_REAL,
+                        Token::UNSIGNED_REAL_E,
+                    ]
+                );
+
+        }
+
+        public function isConst()
+        {
+            return
+                in_array(
+                    $this->type,
+                    [
+                        Token::SIGNED_INTEGER,
+                        Token::SIGNED_REAL,
+                        Token::SIGNED_REAL_E,
+                        Token::UNSIGNED_INTEGER,
+                        Token::UNSIGNED_REAL,
+                        Token::UNSIGNED_REAL_E,
+                        Token::CHARACTER_STRING
+                    ]
+                );
+        }
+
+        public function isKeyword($val = '')
+        {
+            return ($this->type == Token::KEYWORD) &&
+                   ($val == '' ? true : $this->value == $val);
+        }
+
+        public function isIdentifier($val = '')
+        {
+            return ($this->type == Token::IDENTIFIER) &&
+                   ($val == '' ? true : $this->value == $val); 
+        }
+
+        public function isOperator($val = '')
+        {
+            return ($this->type == Token::OPERATOR) &&
+                   ($val == '' ? true : $this->value == $val); 
+        }
+
+        public function isSemicolon()
+        {
+            return ($this->type == Token::DELIMITER);
+        }
+
+        public function isEq($value)
+        {
+            return ($this->value == $value);
+        }
+
+        public function isEOF()
+        {
+            return ($this->type == Token::EOF);
+        }
+
+
     }

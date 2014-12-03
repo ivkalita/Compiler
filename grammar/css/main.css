@@ -1,0 +1,43 @@
+body, html {
+    margin:0;
+    padding:0;
+    color:#000;
+    background:#FFF0F5;
+}
+
+.container {
+    width:90%;
+    margin:0 auto;
+    background: #99c;
+}
+
+div .header {
+    height:50px;
+    text-align:center;
+    background: #9c9;
+}
+
+div .footer {
+    clear:both;
+    background:#cc9;
+}
+
+div .content {
+    float:right;
+    width:70%;
+    background:#ccc;
+}
+
+div .main{
+    text-indent:20px;
+    margin:0 auto;
+    width:90%;
+    background:#ccc;
+}
+
+div .sidebar {
+    float:left;
+    width:30%;
+    background:#c9c;
+
+}

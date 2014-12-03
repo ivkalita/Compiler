@@ -10,7 +10,10 @@
                 ''    => 'help',
                 'h::' => 'help',
                 'f:'  => 'file',
-                'o:'  => 'output'
+                'o:'  => 'output',
+                'H:'  => 'HTML',
+                'l::' => 'lex'
+                // 's::' => 'syntax'
             ];
             $help = '';
             $errors = [];
@@ -18,18 +21,22 @@
             $options = getopt(implode('', array_keys($params)), $params);
             if (isset($options['help']) || isset($options['h']) || count($errors)) {
                 $help = "
-Usage: php compiler.php [-help|--h] [-f|--file=filename] [-o|--output=outfile]
+Usage: php compiler.php [-help|--h] [-f|--file=filename] [-o|--output=outfile] [-H|--HTML=outdir]
 
 Options:
     -h   --help   Show this message
     -f   --file   Provide source filename
     -o   --output Provide output filename
+    -l   --lex    Stop after token parsing
+    -H   --HTML   Render HTML view of tree
 
 Example:
     php compiler.php -f source.pas
     php compiler.php -f source.pas -o output.out
+    php compiler.php -f source.pas -l -o output.out
 ";
             }
+            $outdir = false;
             if (isset($options['file']) || isset($options['f'])) {
                 $filename = isset($options['f']) ? $options['f'] : $options['file'];
                 if (!file_exists($filename)) {
@@ -39,6 +46,12 @@ Example:
                 }
             } else if (!$help) {
                 $errors[] = 'filename required';
+            }
+            if (isset($options['H']) || isset($options['HTML'])) {
+                $outdir = isset($options['H']) ? $options['H'] : $options['HTML'];
+                if (!file_exists($outdir)) {
+                    @mkdir($outdir, 0770, true);
+                }
             }
             if ($errors) {
                 $help .= "Errors:\n" . implode("\n", $errors) . "\n";
@@ -50,7 +63,9 @@ Example:
                 self::$output = fopen(isset($options['o']) ? $options['o']: $options['output'], 'w');
             }
             return [
-                'filename' => $filename
+                'filename' => $filename,
+                'lex'      => isset($options['l']) || isset($options['lex']),
+                'html'     => $outdir
             ];
         }
 
