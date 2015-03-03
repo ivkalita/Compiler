@@ -57,6 +57,7 @@
             'end',
             'file',
             'for',
+            'forward',
             'function',
             'goto',
             'if',
@@ -86,11 +87,10 @@
             '<' => ['>', '='],
             '>' => ['='],
             ':' => ['='],
-            '.' => ['.'],
+            '.' => ['.', ')'],
             '(' => ['*'],
             '*' => [')'],
             '/' => ['/'],
-            '.' => [')'],
             '(' => ['.']
         ];
 
@@ -150,6 +150,16 @@
             }
             $this->point->idx++;
             return $char;
+        }
+
+        private function lookup($delta)
+        {
+            $id = $this->point->idx + $delta;
+            if ($id >= strlen($this->text)) {
+                return self::$EOF;
+            } else {
+                return $this->text[$id];
+            }
         }
 
         private function EOF()
@@ -299,7 +309,29 @@
                         $this->currentToken = new Token(Token::OPERATOR, $value, $text, $this->point);
                         return true;
                     case self::DIGIT_SEQUENCE:
+                        // if ($this->lookup(2) == '..') {
+                        //     $this->currentToken = new Token(
+                        //         $flags['signed']
+                        //             ? Token::SIGNED_INTEGER
+                        //             : Token::UNSIGNED_INTEGER,
+                        //         $value,
+                        //         $text,
+                        //         $this->point
+                        //     );
+                        //     return true;
+                        // }
                         if ($c == '.') {
+                            if ($this->lookup(2) == '.') {
+                                $this->currentToken = new Token(
+                                    $flags['signed']
+                                        ? Token::SIGNED_INTEGER
+                                        : Token::UNSIGNED_INTEGER,
+                                    $value,
+                                    $text,
+                                    $this->point
+                                );
+                                return true;
+                            }
                             $text .= $c;
                             $value .= $this->nextChar();
                             $state = self::ALMOST_REAL;
@@ -335,6 +367,13 @@
                             $state = self::REAL;
                             break;
                         }
+                        // if ($c == '.') {
+                        //     $value = '..';
+                        //     $this->currentToken = new Token(
+                        //         Token::OPERATOR,
+                        //         '..',
+                        //     );
+                        // }
                         throw new TokenException($this->point, $text, ["<DIGIT>"], $c);
                     case self::REAL:
                         if (self::isTerminal($c)) {

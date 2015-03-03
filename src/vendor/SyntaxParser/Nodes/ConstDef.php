@@ -5,13 +5,15 @@ namespace vendor\SyntaxParser\Nodes;
 use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
+use vendor\SemanticParser\Nodes\SymConst;
 
 class ConstDef extends Node
 {
     private $identifier = null;
     private $constant = null;
+    private $symbol = null;
 
-    static public function parse($scanner)
+    public function __construct($scanner, $_symTable)
     {
         $identifier = $scanner->get();
         if (!$identifier->isIdentifier()) {
@@ -25,14 +27,9 @@ class ConstDef extends Node
         if (!$constant->isConst()) {
             parent::simpleException($scanner, ['<CONSTANT']);
         }
+        $this->symbol = new SymConst($identifier->getValue(), $constant->getValue(), $constant->type, $_symTable);
+        $_symTable->append($this->symbol);
         $scanner->next();
-        return new ConstDef($identifier, $constant);
-    }
-
-    public function __construct($identifier, $constant)
-    {
-        $this->identifier = $identifier;
-        $this->constant = $constant;
     }
 
     public function toIdArray(&$id)

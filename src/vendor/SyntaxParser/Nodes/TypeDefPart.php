@@ -10,36 +10,16 @@ class TypeDefPart extends Node
 {
     private $typeDefs = [];
 
-    static public function parse($scanner)
+    public function __construct($scanner, $_symTable)
     {
         $finalKeyWords = ['var', 'function', 'procedure', 'begin'];
         $defs = [];
         while ($scanner->get()->isIdentifier()) {
-            array_push($defs, TypeDef::parse($scanner));
+            array_push($defs, new TypeDef($scanner, $_symTable));
             parent::semicolonPass($scanner);
-            parent::eofLessNext(
-                $scanner,
-                array_merge(
-                    ['<IDENTIFIER>'],
-                    array_map(function($word) {
-                        return "<KEYWORD '$word'>";
-                    }, $finalKeyWords)
-                )
-            );
         }
         if (empty($defs)) {
             parent::simpleException($scanner, ['<IDENTIFIER>']);
         }
-        return new TypeDefPart($defs);
-    }
-
-    static public function firstTokens()
-    {
-        return ["<KEYWORD 'type'>"];
-    }
-
-    public function __construct($defs)
-    {
-        $this->typeDefs = $defs;
     }
 }

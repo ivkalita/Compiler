@@ -5,55 +5,27 @@ namespace vendor\SyntaxParser\Nodes;
 use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
+use vendor\SemanticParser\Nodes\SymType;
+use vendor\SemanticParser\Nodes\SymVar;
+
 
 class VarDec extends Node
 {
+    private $symbol = null;
     private $identifier = null;
-    private $denoter = null;
 
-    static public function parse($scanner)
+    public function __construct($scanner, $_symTable)
     {
         if (!$scanner->get()->isIdentifier()) {
-            throw new SyntaxException(
-                $scanner->get()->point,
-                $scanner->get()->text,
-                ['<IDENTIFIER>'],
-                "<" . $scanner->get()->type . ">"
-            );
+            parent::simpleException($scanner, ['<IDENTIFIER>']);
         }
-        $identifier = $scanner->get();
-        parent::eofLessNext($scanner, ["<OPERATOR ':'>"]);
-        if (!$scanner->get()->isOperator(':')) {
-            throw new SyntaxException(
-                $scanner->get()->point,
-                $scanner->get()->text,
-                ["<OPERATOR ':'"],
-                "<" . $scanner->get()->type . ">"
-            );
+        $this->identifier = $scanner->get();
+        if (!$scanner->nget()->isOperator(':')) {
+            parent::simpleException($scanner, ['<OPERATOR \':\'>']);
         }
-        parent::eofLessNext($scanner, ["<TYPE-DENOTER>"]);
-        $denoter = TypeDenoter::parse($scanner);
-        if (!$scanner->get()->isTypeDenoter()) {
-            throw new SyntaxException(
-                $scanner->get()->point,
-                $scanner->get()->text,
-                ['<TYPE-DENOTER>'],
-                "<" . $scanner->get()->type . ">"
-            );
-        }
-        $denoter = $scanner->get();
         $scanner->next();
-        return new VarDec($identifier, $denoter);
-    }
-
-    static public function firstTokens()
-    {
-        return ['<IDENTIFIER>'];
-    }
-
-    public function __construct($identifier, $denoter)
-    {
-        $this->identifier = $identifier;
-        $this->denoter = $denoter;
+        $type = SymType::parse($scanner, $_symTable, null);
+        $this->symbol = new SymVar($this->identifier->getValue(), $type);
+        $_symTable->append($this->symbol);
     }
 }

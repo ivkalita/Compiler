@@ -10,31 +10,15 @@ class VarDecPart extends Node
 {
     private $varDecs = [];
 
-    static public function parse($scanner)
+    public function __construct($scanner, $_symTable, $finalKeyWords)
     {
-        $finalKeyWords = ['function', 'procedure', 'begin'];
         $decs = [];
         while ($scanner->get()->isIdentifier()) {
-            array_push($decs, VarDec::parse($scanner));
+            array_push($this->varDecs, new VarDec($scanner, $_symTable));
             parent::semicolonPass($scanner);
-            parent::eofLessNext(
-                $scanner,
-                ['<KEYWORD>']
-            );
         }
-        if (empty($decs)) {
+        if (empty($this->varDecs)) {
             parent::simpleException($scanner, ['<IDENTIFIER>']);
         }
-        return new VarDecPart($decs);
-    }
-
-    static public function firstTokens()
-    {
-        return ["<KEYWORD 'var'>"];
-    }
-
-    public function __construct($decs)
-    {
-        $this->constDecs = $decs;
     }
 }

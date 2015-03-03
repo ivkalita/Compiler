@@ -11,10 +11,23 @@ class TypeDenoter extends Node
     private $identifier = null;
     private $type = null;
     //Type types, lol
-    static private $IDENTIFIER = 0;
-    static private $NEW_STRUCT = 1;
-    static private $NEW_POINTER = 2;
-    static private $NEW_SUBRANGE = 3;
+
+
+    public function __construct($scanner, $_symTable)
+    {
+        $typeSwitch = [
+            self::$NEW_STRUCT => 'RecordTypeDec',
+            self::$NEW_POINTER => 'PointerTypeDec',
+            self::$NEW_SUBRANGE => 'SubRangeTypeDec'
+        ];
+        $type = self::guessType($scanner);
+        if ($type == self::$IDENTIFIER) {
+            $identifier = $scanner->get();
+            $scanner->next();
+        } else {
+            $identifier = new $typeSwitch[$type]($scanner, $_symTable);
+        }
+    }
 
     static private function guessType($scanner)
     {
@@ -29,37 +42,5 @@ class TypeDenoter extends Node
         } else {
             parent::simpleException($scanner, self::firstTokens());
         }
-    }
-    static public function parse($scanner)
-    {
-        $typeSwitch = [
-            self::$NEW_STRUCT => 'RecordTypeDec',
-            self::$NEW_POINTER => 'PointerTypeDec',
-            self::$NEW_SUBRANGE => 'SubRangeTypeDec'
-        ];
-        $type = self::guessType($scanner);
-        if ($type == self::$IDENTIFIER) {
-            $identifier = $scanner->get();
-            $scanner->next();
-        } else {
-            $identifier = $typeSwitch[$type]::parse($scanner);
-        }
-        return new TypeDenoter($identifier, $type);
-    }
-
-    static public function firstTokens()
-    {
-        return array_merge(
-            RecordTypeDec::firstTokens(),
-            PointerTypeDec::firstTokens(),
-            SubRangeTypeDec::firstTokens()
-            ['<IDENTIFIER>']
-        );
-    }
-
-    public function __construct($identifier, $denoter)
-    {
-        $this->identifier = $identifier;
-        $this->denoter = $denoter;
     }
 }

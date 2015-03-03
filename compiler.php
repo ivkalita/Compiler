@@ -27,9 +27,9 @@
         foreach ($tokens as &$token) {
             Console::write($token->getStr());
         }
-    } else {
+    } else if ($params['syntax-only']) {
         try {
-            $program = Program::parse($scanner);
+            $program = new Program($scanner);
         } catch (CompilerException $e) {
             Console::write($e);
             Console::closeStream();
@@ -43,6 +43,15 @@
             $syntaxTree = $program->toIdArray();
             Console::write(json_encode($syntaxTree));
         }
+    } else if ($params['table-only']) {
+        try {
+            $program = new Program($scanner);
+        } catch (CompilerException $e) {
+            Console::write($e);
+            Console::closeStream();
+            exit(1);
+        }
+        $program->symTable->printInfo('');
     }
     Console::closeStream();
 

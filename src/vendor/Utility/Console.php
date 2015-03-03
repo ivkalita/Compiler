@@ -12,8 +12,9 @@
                 'f:'  => 'file',
                 'o:'  => 'output',
                 'H:'  => 'HTML',
-                'l::' => 'lex'
-                // 's::' => 'syntax'
+                'l::' => 'lex',
+                'to::' => 'table-only',
+                'so::' => 'syntax-only'
             ];
             $help = '';
             $errors = [];
@@ -24,11 +25,13 @@
 Usage: php compiler.php [-help|--h] [-f|--file=filename] [-o|--output=outfile] [-H|--HTML=outdir]
 
 Options:
-    -h   --help   Show this message
-    -f   --file   Provide source filename
-    -o   --output Provide output filename
-    -l   --lex    Stop after token parsing
-    -H   --HTML   Render HTML view of tree
+    -h   --help             Show this message
+    -f   --file             Provide source filename
+    -o   --output           Provide output filename
+    -l   --lex              Stop after token parsing
+    -H   --HTML             Render HTML view of tree
+    -to  --table-only       Show only symbol table
+    -so  --syntax-only      Show only syntax tree
 
 Example:
     php compiler.php -f source.pas
@@ -65,7 +68,9 @@ Example:
             return [
                 'filename' => $filename,
                 'lex'      => isset($options['l']) || isset($options['lex']),
-                'html'     => $outdir
+                'html'     => $outdir,
+                'table-only' => isset($options['to']) || isset($options['table-only']),
+                'syntax-only' => isset($options['so']) || isset($options['syntax-only'])
             ];
         }
 

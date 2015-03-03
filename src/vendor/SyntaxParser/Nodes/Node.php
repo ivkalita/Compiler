@@ -16,7 +16,7 @@
     {
     	static public function eofLessNext($scanner, $expected)
     	{
-            if (!$scanner->next()) { 
+            if (!$scanner->next()) {
             	throw new SyntaxException(
             	    $scanner->get()->point,
             	    $scanner->get()->text,

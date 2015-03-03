@@ -5,18 +5,21 @@ namespace vendor\SyntaxParser\Nodes;
 use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
+use vendor\SemanticParser\Nodes\SymTable;
 
 class Program extends Node
 {
     private $heading;
     private $block;
+    public $symTable;
 
-    static public function parse($scanner)
+    public function __construct($scanner)
     {
         $scanner->next();
-        $heading = ProgramHeading::parse($scanner);
+        $this->symTable = new SymTable(null);
+        $this->heading = new ProgramHeading($scanner);
         parent::semicolonPass($scanner);
-        $block = Block::parse($scanner);
+        $this->block = new Block($scanner, $this->symTable);
         if (!$scanner->get()->isOperator('.')) {
             parent::simpleException($scanner, ["<OPERATOR '.'>"]);
         }
@@ -24,18 +27,6 @@ class Program extends Node
         if (!$scanner->get()->isEOF()) {
             parent::simpleException($scanner, ['<EOF>']);
         }
-        return new Program($heading, $block);
-    }
-
-    static public function firstTokens()
-    {
-        return ['<PROGRAM HEADING>'];
-    }
-
-    public function __construct($heading, $block)
-    {
-        $this->heading = $heading;
-        $this->block = $block;
     }
 
     public function toIdArray($id = 0)

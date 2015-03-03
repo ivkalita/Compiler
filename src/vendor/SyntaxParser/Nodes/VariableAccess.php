@@ -49,7 +49,7 @@ class VariableAccess extends Node
                     $curVA->variable = IdentifiedVariable::parse($scanner, clone $curVA);
                     break;
             }
-        }        
+        }
         return $curVA;
     }
 

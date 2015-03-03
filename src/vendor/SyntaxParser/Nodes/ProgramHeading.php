@@ -8,24 +8,18 @@ use vendor\Exception\SyntaxException;
 
 class ProgramHeading extends Node
 {
-    private $name; //identifier
+    private $name;
 
-    static public function parse($scanner)
+    public function __construct($scanner)
     {
         if (!$scanner->get()->isKeyword('program')) {
             parent::simpleException($scanner, ["<KEYWORD 'program'"]);
         }
-        $name = $scanner->nget();
-        if (!$name->isIdentifier()) {
+        $this->name = $scanner->nget();
+        if (!$this->name->isIdentifier()) {
             parent::simpleException($scanner, ['<IDENTIFIER>']); 
         }                
         $scanner->next();
-        return new ProgramHeading($name);
-    }
-
-    public function __construct($name)
-    {
-        $this->name = $name;
     }
 
     public function toIdArray(&$id)

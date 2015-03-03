@@ -20,6 +20,7 @@ class CompoundStatement extends Node
         while (!$scanner->get()->isKeyword('end')) {
             $statements[] = Statement::parse($scanner);
         }
+        $scanner->next();
         return new CompoundStatement($statements);
     }
 

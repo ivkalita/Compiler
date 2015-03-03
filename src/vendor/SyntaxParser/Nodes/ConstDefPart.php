@@ -10,29 +10,23 @@ class ConstDefPart extends Node
 {
     private $constDefs = [];
 
-    static public function parse($scanner)
+    public function __construct($scanner, $_symTable)
     {
         $finalKeyWords = [
-            // 'type',
+            'type',
             'var',
-            // 'function',
-            // 'procedure',
+            'function',
+            'procedure',
             'begin'
         ];
         $defs = [];
         while ($scanner->get()->isIdentifier()) {
-            array_push($defs, ConstDef::parse($scanner));
+            array_push($defs, new ConstDef($scanner, $_symTable));
             parent::semicolonPass($scanner);
         }
         if (empty($defs)) {
             parent::simpleException($scanner, ['<IDENTIFIER>']);
         }
-        return new ConstDefPart($defs);
-    }
-
-    public function __construct($defs)
-    {
-        $this->constDefs = $defs;
     }
 
     public function toIdArray(&$id)

@@ -139,6 +139,18 @@
 
         }
 
+        public function isInteger()
+        {
+            return
+                in_array(
+                    $this->type,
+                    [
+                        Token::UNSIGNED_INTEGER,
+                        Token::SIGNED_INTEGER
+                    ]
+                );
+        }
+
         public function isConst()
         {
             return
