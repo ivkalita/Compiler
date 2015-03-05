@@ -51,4 +51,21 @@ class SymRecordType extends SymType
 		Console::write("{$offset}{$this->identifier}\n");
 		$this->symTable->printInfo($offset);
 	}
+
+	public function getFieldType($identifier)
+	{
+		$field = $this->symTable->find($identifier);
+		if (!is_a($field, 'vendor\SemanticParser\Nodes\SymVar')) {
+			return null;
+		}
+		return $field->type;
+	}
+
+	public function isConvertableTo($type)
+	{
+		if (is_a($type, 'vendor\SemanticParser\Nodes\SymAliasType')) {
+			$type = $type->getBase();
+		}
+		return $type->identifier == $this->identifier;
+	}
 }

@@ -7,6 +7,7 @@ use vendor\SyntaxParser\Nodes\Node;
 class Term extends Node
 {
 	private $tip = null;
+	public $symType = null;
 
 
 	//a * b * c / e
@@ -21,35 +22,24 @@ class Term extends Node
 	//     *     e
 	//  *    c
 	//a   b
-	static public function parse($scanner)
+	public function __construct($scanner, $_symTable)
 	{
-		// echo "Factor::parse()\n";
-		$factor = Factor::parse($scanner);
-		$tip = null;
+		$factor = new Factor($scanner, $_symTable);
+		$this->tip = null;
 		while ($scanner->get()->isMultOperation()) {
 			$operator = $scanner->get();
-			parent::eofLessNext($scanner, ['<FACTOR>']);
-			$factor2 = Factor::parse($scanner);
-			if (!$tip) {
-				$tip = new BinOp($factor, $factor2, $operator);
+			$scanner->next();
+			$factor2 = new Factor($scanner, $_symTable);
+			if (!$this->tip) {
+				$this->tip = new BinOp($factor, $factor2, $operator, $_symTable);
 				continue;
 			}
-			$tip = new BinOp($tip, $factor2, $operator);
+			$this->tip = new BinOp($this->tip, $factor2, $operator, $_symTable);
 		}
-		if (!$tip) {
-			$tip = $factor;
+		if (!$this->tip) {
+			$this->tip = $factor;
 		}
-		return new Term($tip);
-	}
-
-	public function __construct($tip)
-	{
-		$this->tip = $tip;
-	}
-
-	static public function firstTokens()
-	{
-		return Factor::firstTokens();
+		$this->symType = $this->tip->symType;
 	}
 
 	public function toIdArray(&$id)

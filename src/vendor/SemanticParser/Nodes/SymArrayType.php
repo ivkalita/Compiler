@@ -62,6 +62,14 @@ class SymArrayType extends SymType
 		// $scanner->next();
 	}
 
+	public function checkIndex($expression, $idx, $_symTable)
+	{
+		if (count($this->dimensions) <= $idx) {
+			SemanticException::raw('Array has already completely dereferenced');
+		}
+		return SymSimpleType::equal($expression->symType, $_symTable->findRecursive('integer'));
+	}
+
 	public function printInfo($offset)
 	{
 		Console::write("{$offset}SymArrayType:\n");
@@ -71,5 +79,26 @@ class SymArrayType extends SymType
 			$this->dimensions[$i]->printInfo($offset);
 		}
 		$this->type->printInfo($offset);
+	}
+
+	public function isConvertableTo($type)
+	{
+		if (is_a($type, 'vendor\SemanticParser\Nodes\SymAliasType')) {
+			$type = $type->getBase();
+		}
+		if ($this->identifier == $type->identifier) {
+			return true;
+		}
+		if (is_a($type, 'vendor\SemanticParser\Nodes\SymArrayType')) {
+			$arrayType = $type->type;
+			$thisType = $this->type;
+			$class = get_class($arrayType);
+			if ($class::equal($arrayType, $thisType)) {
+				if ($type->isDynamic()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

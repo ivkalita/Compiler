@@ -7,31 +7,28 @@ use vendor\SyntaxParser\Nodes\Node;
 class SimpleExpression extends Node
 {
     //simple-expression = [ sign ] term { adding-operator term }
-    private $node = null;
+    private $tip = null;
+    public $symType = null;
 
-    static public function parse($scanner)
+    public function __construct($scanner, $_symTable)
     {
         $sign = null;
         if ($scanner->get()->isOperator('+') || $scanner->get()->isOperator('-')) {
             $sign = $scanner->get();
             $scanner->next();
         }
-        $term = Term::parse($scanner);
+        $term = new Term($scanner, $_symTable);
         while ($scanner->get()->isAdditive()) {
             $operator = $scanner->get();
             $scanner->next();
-            $term2 = Term::parse($scanner);
-            $term = new BinOp($term, $term2, $operator);
+            $term2 = new Term($scanner, $_symTable);
+            $term = new BinOp($term, $term2, $operator, $_symTable);
         }
         if ($sign) {
-            $term = new UnOp($term, $sign);
+            $term = new UnOp($term, $sign, $_symTable);
         }
-        return new SimpleExpression($term);
-    }
-
-    public function __construct($tip)
-    {
-        $this->tip = $tip;
+        $this->tip = $term;
+        $this->symType = $this->tip->symType;
     }
 
     public function toIdArray(&$id)

@@ -28,4 +28,9 @@ class SymArrayAnonimType extends SymArrayType
 		}
 		$this->type->printInfo($offset);
 	}
+
+	public function isConvertableTo($type)
+	{
+		return parent::isConvertableTo($type);
+	}
 }

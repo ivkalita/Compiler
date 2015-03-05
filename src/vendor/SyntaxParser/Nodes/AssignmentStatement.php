@@ -11,21 +11,22 @@ class AssignmentStatement extends Node
     private $leftPart = null;
     private $rightPart = null;
 
-    static public function parse($scanner)
+    public function __construct($scanner, $_symTable, $expression)
     {
-        $leftPart = Expression::parse($scanner);        
+        if ($expression != null) {
+            $this->leftPart = $expression;
+        } else {
+            $this->leftPart = new Expression($scanner, $_symTable);
+        }
         if (!$scanner->get()->isOperator(':=')) {
             parent::simpleException($scanner, ["<OPERATOR ':='>"]);
         }
         $scanner->next();
-        $rightPart = Expression::parse($scanner);
-        return new AssignmentStatement($leftPart, $rightPart);
-    }
-
-    public function __construct($leftPart, $rightPart)
-    {
-        $this->leftPart = $leftPart;
-        $this->rightPart = $rightPart;
+        $this->rightPart = new Expression($scanner, $_symTable);
+        $class = get_class($this->rightPart->symType);
+        if (!$class::equal($this->rightPart->symType, $this->leftPart->symType)) {
+            $this->leftPart = new TypeCast($this->leftPart, $this->rightPart->symType);
+        }
     }
 
     public function toIdArray(&$id)

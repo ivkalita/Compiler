@@ -25,4 +25,9 @@ class SymPointerAnonimType extends SymPointerType
 		Console::write("{$offset}{$this->identifier}\n");
 		$this->type->printInfo($offset);
 	}
+
+	public function isConvertableTo($type)
+	{
+		return parent::isConvertableTo($type);
+	}
 }

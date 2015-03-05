@@ -10,8 +10,8 @@ class SymFunc extends SymProc
 
 	public function __construct($identifier, $_symTable, $node, $returnType)
 	{
-        parent::__construct($identifier, $_symTable, $node);
-        $this->returnType = $returnType;
+		parent::__construct($identifier, $_symTable, $node);
+		$this->returnType = $returnType;
 	}
 
 	public function printInfo($offset)
@@ -20,14 +20,15 @@ class SymFunc extends SymProc
 		$offset .= '    ';
 		Console::write("{$offset}{$this->identifier}\n");
 		$this->symTable->printInfo($offset);
-        Console::write("{$offset}return value:\n");
-        $this->returnType->printInfo($offset);
+		Console::write("{$offset}return value:\n");
+		$this->returnType->printInfo($offset);
 	}
 
 	static public function cmpSignature($a, $b)
-    {
-        return
-            parent::cmpSignature($a, $b) &&
-            (get_class($a->returnType) == get_class($b->returnType));
-    }
+	{
+		$base = parent::cmpSignature($a, $b);
+		$class = get_class($a->returnType);
+		$base &= $class::equal($a->returnType, $b->returnType);
+		return $base;
+	}
 }

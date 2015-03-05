@@ -8,6 +8,7 @@ use vendor\SemanticParser\Nodes\SymType;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
 use vendor\Exception\SemanticException;
+use vendor\SemanticParser\Nodes\SymVar;
 
 class Func extends Proc
 {
@@ -30,6 +31,7 @@ class Func extends Proc
         if ($type->isAnonim()) {
             $symTable->append($type);
         }
+        $_symTable->append(new SymVar('result', $type));
         return [$identifier, $symTable, $type];
     }
 

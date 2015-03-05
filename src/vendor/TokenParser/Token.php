@@ -121,8 +121,11 @@
 
         public function isMultOperation()
         {
-            return $this->type === Token::OPERATOR &&
-                   in_array($this->value, ['*', '/']);
+            $isGeneralMult = $this->type === Token::OPERATOR &&
+                in_array($this->value, ['*', '/']);
+            $isIntegerMult = $this->type === Token::KEYWORD &&
+                in_array($this->value, ['div', 'mod']);
+            return $isGeneralMult || $isIntegerMult;
         }
 
         public function isUnSignedConst()

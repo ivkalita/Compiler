@@ -43,6 +43,22 @@
             );
         }
 
+        static public function undeclared($scanner, $identifier)
+        {
+            self::raw($scanner, "Undeclared identifier <$identifier>");
+        }
+
+        static public function varAccessTypeMismatch($scanner, $symbol, $expectedType)
+        {
+            self::raw($scanner, "Expected instance of <$expectedType>, found instance of <{$symbol->identifier}>");
+        }
+
+        static public function invalidTypeCast($src, $dst)
+        {
+            self::raw(null, "Invalid typecast <{$src->identifier}> to <{$dst->identifier}>");
+
+        }
+
         static public function raw($scanner, $msg)
         {
             throw new SemanticException(
@@ -51,6 +67,11 @@
                 [],
                 ''
             );
+        }
+
+        static public function invalidArgCount($identifier)
+        {
+            self::raw(null, "Invalid argument count for calling <$identifier>");
         }
 
         static public function redeclared($identifier)

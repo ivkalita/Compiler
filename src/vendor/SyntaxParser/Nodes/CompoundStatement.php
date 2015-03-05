@@ -10,23 +10,17 @@ class CompoundStatement extends Node
 {
     private $statements = null;
 
-    static public function parse($scanner)
+    public function __construct($scanner, $_symTable)
     {
-        $statements = [];
+        $this->statements = [];
         if (!$scanner->get()->isKeyword('begin')) {
             parent::simpleException($scanner, ["<KEYWORD 'begin'>"]);
         }
         $scanner->next();
         while (!$scanner->get()->isKeyword('end')) {
-            $statements[] = Statement::parse($scanner);
+            $this->statements[] = new Statement($scanner, $_symTable);
         }
         $scanner->next();
-        return new CompoundStatement($statements);
-    }
-
-    public function __construct($statements)
-    {
-        $this->statements = $statements;
     }
 
     public function toIdArray(&$id)

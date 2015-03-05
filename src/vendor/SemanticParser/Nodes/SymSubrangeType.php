@@ -61,4 +61,12 @@ class SymSubrangeType extends SymType
 		Console::write("{$offset}{$this->identifier}\n");
 		Console::write("{$offset}{$this->from}..{$this->to}\n");
 	}
+
+	public function isConvertableTo($type)
+	{
+		if (is_a($type, 'vendor\SemanticParser\Nodes\SymAliasType')) {
+			$type = $type->getBase();
+		}
+		return is_a($type, 'vendor\SemanticParser\Nodes\SymSimpleType');
+	}
 }

@@ -3,26 +3,37 @@
 namespace vendor\SyntaxParser\Nodes;
 
 use vendor\SyntaxParser\Nodes\Node;
+use vendor\SemanticParser\Nodes;
+use vendor\Exception\SemanticException;
 
 class FunctionDesignator extends Node
 {
 	private $identifier = null;
-	private $params = null;
+	private $paramList = null;
+	public $symType = null;
+	public $symbol = null;
 
-	public function __construct($identifier, $params)
+	public function __construct($identifier, $paramList, $_symTable)
 	{
+		$symFunc = $_symTable->findRecursive($identifier->getValue());
+		if ($symFunc == null || !is_a($symFunc, 'vendor\SemanticParser\Nodes\SymFunc')) {
+			//TODO: Throw exceptions like identifier <$identifier> is not a function
+			SemanticException::undeclared($identifier->getValue());
+		}
+		$symFuncArgs = $symFunc->getArgs();
+		if (count($paramList->params) != count($symFuncArgs)) {
+			SemanticException::invalidArgCount($identifier->getValue());
+		}
+		for ($i = 0; $i < count($paramList->params); $i++) {
+			$class = get_class($symFuncArgs[$i]->type);
+			if (!$class::equal($symFuncArgs[$i]->type, $paramList->params[$i]->symType)) {
+				$paramList->params[$i] = new TypeCast($paramList->params[$i], $symFuncArgs[$i]->type);
+			}
+		}
+		$this->symType = $symFunc->returnType;
+		$this->symbol = $symFunc;
 		$this->identifier = $identifier;
-		$this->params = $params;
-	}
-
-	public function toArray()
-	{
-		return [
-		'FunctionDesignator' => [
-				'identifier' => $this->identifier->getValue(),
-				'params'     => $this->params->toArray()
-			]
-		];
+		$this->paramList = $paramList;
 	}
 
 	public function toIdArray(&$id)
@@ -37,9 +48,16 @@ class FunctionDesignator extends Node
 				]
 			]
 		];
-		if ($this->params) {
-			array_push($node["children"], $this->params->toIdArray(++$id));
+		if ($this->paramList) {
+			array_push($node["children"], $this->paramList->toIdArray(++$id));
 		}
+		array_push(
+			$node["children"],
+			[
+				"id" => $id++,
+				"name" => "returnType={$this->symType->identifier}"
+			]
+		);
 		return $node;
 	}
 }

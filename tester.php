@@ -16,7 +16,13 @@
             if ($file[0] == '.') {
                 continue;
             }
-            $trees[] = file_get_contents($outdir . "trees/$file");
+            $out = file_get_contents($outdir . "trees/$file");
+            if (strpos($out, 'exception') !== false) {
+                $out = str_replace("\n", "  ", str_replace("\"", "'", $out));
+                $trees[] = '{"id":0, name:"' . $out . '"}';
+            } else {
+                $trees[] = $out;
+            }
             $src[] = json_encode(explode("\n", file_get_contents($indir . str_replace("out", "pas", $file))));
 
         }
@@ -25,7 +31,7 @@
         $files = scandir($indir);
         // $syntaxTree       = file_get_contents($outdir . "trees/01.out");
         // $src              = file_get_contents($indir . "01.pas");
-        $assetsPath       = "/home/kaduev/Coding/study/compiler/assets";
+        $assetsPath       = "/home/kaduev13/Documents/Compiler/assets";
         $aceEditorPath    = $assetsPath . "/ace/ace.js";
         $baseCSSPath      = $assetsPath . "/Jit/base.css";
         $spaceTreeCSSPath = $assetsPath . "/Jit/Spacetree.css";
@@ -265,6 +271,9 @@
         }
         $treeOut = json_decode(file_get_contents($out), true);
         $treeEta = json_decode(file_get_contents($etalon), true);
+        if ($treeOut == null || $treeEta == null) {
+            return false;
+        }
         return arrayCmp($treeEta, $treeOut);
     }
 
@@ -298,7 +307,8 @@
             $etalonFileFull = $etalon . $outFile;
             $switcher = [
             	1 => 'l',
-            	3 => '-table-only'
+                2 => 'S',
+            	3 => 'T'
             ];
             try {
                 $sysStr = "php ./compiler.php -f $inFileFull -o $outFileFull -" . $switcher[$mode];
@@ -340,6 +350,7 @@
     //argv = [0, in_dir, out_dir, etalon_dir, mode]
     //mode: 1 -> lex
     //      2 -> syntax
+    //      3 -> tables
     testAll($argv[1], $argv[2], $argv[3], $argv[4]);
     if ($argv[4] == 2) {
         genHtml($argv[1], $argv[2]);

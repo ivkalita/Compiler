@@ -25,4 +25,9 @@ class SymRecordAnonimType extends SymRecordType
 		Console::write("{$offset}{$this->identifier}\n");
 		$this->symTable->printInfo($offset);
 	}
+
+	public function isConvertableTo($type)
+	{
+		return parent::isConvertableTo($type);
+	}
 }

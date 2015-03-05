@@ -57,8 +57,19 @@ class SymProc extends Symbol
         return true;
     }
 
-    public function mergeWith($a)
+    public function getArgs()
     {
-        $this->symTable = $a->symTable;
+        $args = [];
+        foreach($this->symTable->symbols as $symbol) {
+            if (is_a($symbol, 'vendor\SemanticParser\Nodes\SymArg')) {
+                $args[$symbol->index] = $symbol;
+            }
+        }
+        return $args;
+    }
+
+    public function mergeWith($src)
+    {
+        $this->symTable = $src->symTable;
     }
 }

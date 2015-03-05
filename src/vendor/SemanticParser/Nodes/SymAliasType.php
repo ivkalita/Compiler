@@ -24,4 +24,20 @@ class SymAliasType extends SymType
 		Console::write("{$offset}{$this->identifier}\n");
 		$this->aliased->printInfo($offset);
 	}
+
+	public function getBase()
+	{
+		$type = $this->aliased;
+		while (true) {
+			if (!is_a($type, 'vendor\SemanticParser\Nodes\SymAliasType')) {
+				return $type;
+			}
+			$type = $type->alised;
+		}
+	}
+
+	public function isConvertableTo($type)
+	{
+		return $this->getBase()->isConvertableTo($type);
+	}
 }

@@ -1,1 +1,1 @@
-{"id":0,"name":"Program","children":[{"id":1,"name":"Heading","children":[{"id":2,"name":"t13"}]},{"id":3,"name":"Block","children":[{"id":4,"name":"ConstDefPart","children":[{"id":5,"name":"ConstDef","children":[{"id":6,"name":"identifier = a"},{"id":7,"name":"constant = 1"}]}]},{"id":9,"name":"CompoundStatement","children":[]}]}]}
+{"id":0,"name":"Program","children":[{"id":1,"name":"Heading","children":[{"id":2,"name":"t13"}]},{"id":3,"name":"Block","children":[{"id":4,"name":"ConstDefPart","children":[]},{"id":5,"name":"CompoundStatement","children":[]}]}]}

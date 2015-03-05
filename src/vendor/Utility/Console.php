@@ -13,8 +13,8 @@
                 'o:'  => 'output',
                 'H:'  => 'HTML',
                 'l::' => 'lex',
-                'to::' => 'table-only',
-                'so::' => 'syntax-only'
+                'T::' => 'table-only',
+                'S::' => 'syntax-only'
             ];
             $help = '';
             $errors = [];
@@ -69,8 +69,8 @@ Example:
                 'filename' => $filename,
                 'lex'      => isset($options['l']) || isset($options['lex']),
                 'html'     => $outdir,
-                'table-only' => isset($options['to']) || isset($options['table-only']),
-                'syntax-only' => isset($options['so']) || isset($options['syntax-only'])
+                'table-only' => isset($options['T']) || isset($options['table-only']),
+                'syntax-only' => isset($options['S']) || isset($options['syntax-only'])
             ];
         }
 

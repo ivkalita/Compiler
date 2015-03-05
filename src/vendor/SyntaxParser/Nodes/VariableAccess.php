@@ -8,7 +8,8 @@ use vendor\Exception\SyntaxException;
 
 class VariableAccess extends Node
 {
-    private $variable = null;
+    public $variable = null;
+    public $symType = null;
 
     //key operator - such an operator, that signals to go deeper parsing
     static private function isKeyOperator($token)
@@ -16,59 +17,51 @@ class VariableAccess extends Node
         return $token->isOperator() && in_array($token->getValue(), ['.', '[', '^']);
     }
 
-    static public function parse($scanner, $identifier = null)
+    static public function parse($scanner, $_symTable, $identifier = null)
     {
         if (!$identifier) {
             if (!$scanner->get()->isIdentifier()) {
                 parent::simpleException($scanner, ['<IDENTIFIER>']);
             }
             $identifier = $scanner->get();
-            parent::eofLessNext(
-                $scanner,
-                ["<OPERATOR '.'>", "<OPERATOR '['>", "<OPERATOR '^'>"]
-            );
+            $scanner->next();
         }
         //entire-variable
-        $cur = new EntireVariable($identifier);
+        $cur = new EntireVariable($scanner, $_symTable, $identifier);
         //variable-access
         $curVA = new VariableAccess($cur);
         while (self::isKeyOperator($scanner->get())) {
             $operVal = $scanner->get()->getValue();
-            parent::eofLessNext(
-                $scanner,
-                ["<OPERATOR '.'>", "<OPERATOR '['>", "<OPERATOR '^'>"]
-            );
+            $scanner->next();
             switch ($operVal) {
                 case '.':
-                    $curVA->variable = ComponentVariable::parse($scanner, clone $curVA);
+                    $curVA->variable = new ComponentVariable($scanner, $_symTable, clone $curVA);
                     break;
                 case '[':
-                    $curVA->variable = IndexedVariable::parse($scanner, clone $curVA);
+                    $curVA->variable = new IndexedVariable($scanner, $_symTable, clone $curVA);
                     break;
                 case '^':
-                    $curVA->variable = IdentifiedVariable::parse($scanner, clone $curVA);
+                    $curVA->variable = new IdentifiedVariable($scanner, $_symTable, clone $curVA);
                     break;
             }
         }
+        $curVA->symType = $curVA->variable->symType;
         return $curVA;
-    }
-
-    static public function firstTokens()
-    {
-        return ['<IDENTIFIER>'];
     }
 
     public function __construct($variable)
     {
         $this->variable = $variable;
+        $this->symType = $this->variable->symType;
     }
 
-    public function toArray()
-    {
-        return [
-            "VariableAccess" => $this->variable->toArray()
-        ];
-    }
+    //TODO: DC
+    // public function toArray()
+    // {
+    //     return [
+    //         "VariableAccess" => $this->variable->toArray()
+    //     ];
+    // }
 
     public function toIdArray(&$id)
     {

@@ -31,4 +31,9 @@ class SymSubrangeAnonimType extends SymSubrangeType
 		Console::write("{$offset}{$this->identifier}\n");
 		Console::write("{$offset}{$this->from}..{$this->to}\n");
 	}
+
+	public function isConvertableTo($type)
+	{
+		return parent::isConvertableTo($type);
+	}
 }

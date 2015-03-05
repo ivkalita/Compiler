@@ -4,61 +4,54 @@ namespace vendor\SyntaxParser\Nodes;
 
 use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Token;
+use vendor\SemanticParser\Nodes\SymType;
+
 class Factor extends Node
 {
 	private $node = null;
 	private $keyword = null;
+	public $symType = null;
 
-	static public function parse($scanner)
+	public function __construct($scanner, $_symTable)
 	{
 		if ($scanner->get()->isUnSignedConst()) {
-			$const = $scanner->get();
+			$this->node = $scanner->get();
+			$this->symType = SymType::recognizeSimpleType($this->node, $_symTable);
 			$scanner->next();
-			return new Factor($const);
+			return;
 		}
 		if ($scanner->get()->isLBracket()) {
 			$scanner->next();
-			$expr = Expression::parse($scanner);
+			$this->node = new Expression($scanner, $_symTable);
 			if (!$scanner->get()->isRBracket()) {
 				parent::simpleException($scanner, ["<OPERATOR ')'>"]);
 			}
+			$this->symType = $this->node->symType;
 			$scanner->next();
-			return new Factor($expr);
+			return;
 		}
 		if ($scanner->get()->isKeyword('not')) {
-			$keyword = $scanner->get();
+			$this->keyword = $scanner->get();
 			$scanner->next();
-			$factor = Factor::parse($scanner);
+			$this->node = new Factor($scanner, $_symTable);
+			$this->symType = $_symTable->findRecursive('boolean');
+			$this->node = new TypeCast($this->node, $this->symType);
 			$scanner->next();
-			return new Factor($factor, $keyword);
+			return;
 		}
 		if ($scanner->get()->isIdentifier()) {
 			$identifier = $scanner->get();
-			parent::eofLessNext($scanner, ['<ЧТО НИБУДЬ, НО НЕ ЕОФ>']);
+			$scanner->next();
 			if ($scanner->get()->isLBracket()) {
-				$actualParamList = ActualParamList::parse($scanner);
-				return new Factor(new FunctionDesignator($identifier, $actualParamList));
+				$actualParamList = new ActualParamList($scanner, $_symTable);
+				$this->node = new FunctionDesignator($identifier, $actualParamList, $_symTable);
 			} else {
-				return new Factor(VariableAccess::parse($scanner, $identifier));
+				$this->node = VariableAccess::parse($scanner, $_symTable, $identifier);
 			}
+			$this->symType = $this->node->symType;
+			return;
 		}
-		parent::simpleException($scanner, self::firstTokens());
-	}
-
-	static public function firstTokens()
-	{
-		return [
-			'<IDENTIFIER>',
-			'<UNSIGNED-CONST>',
-			"<KEYWORD 'not'>",
-			"<OPERATOR '('>"
-		];
-	}
-
-	public function __construct($node, $keyword = null)
-	{
-		$this->node = $node;
-		$this->keyword = $keyword;
+		parent::simpleException($scanner, ['<FACTOR>']);
 	}
 
 	public function toIdArray(&$id)
@@ -72,7 +65,11 @@ class Factor extends Node
 						"id" => ++$id,
 						"name" => "not"
 					],
-					$this->node->toIdArray(++$id)
+					$this->node->toIdArray(++$id),
+					[
+						"id" => $id++,
+						"name" => "type={$this->symType->identifier}"
+					]
 				]
 			];
 		} else {
@@ -80,7 +77,7 @@ class Factor extends Node
 				$this->node instanceof Token ?
 					[
 						"id" => $id++,
-						"name" => $this->node->getValue()
+						"name" => $this->node->getValue() . ": {$this->symType->identifier}"
 					] :
 					$this->node->toIdArray($id)
 			);

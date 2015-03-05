@@ -1,9 +1,12 @@
 <?php
 
 namespace vendor\SemanticParser\Nodes;
+
 use vendor\TokenParser\Scanner;
 use vendor\Utility\Console;
 use vendor\Exception\SemanticException;
+use vendor\SemanticParser\Nodes\SymType;
+use vendor\TokenParser\Token;
 
 class SymType extends Symbol
 {
@@ -79,8 +82,33 @@ class SymType extends Symbol
 		}
 	}
 
+	static public function recognizeSimpleType($const, $_symTable)
+	{
+		switch ($const->type) {
+			case Token::UNSIGNED_NUMBER:
+			case Token::UNSIGNED_INTEGER:
+			case Token::SIGNED_NUMBER:
+			case Token::SIGNED_INTEGER:
+				return $_symTable->findRecursive('integer');
+			case Token::UNSIGNED_REAL:
+			case Token::UNSIGNED_REAL_E:
+			case Token::SIGNED_REAL:
+			case Token::SIGNED_REAL_E:
+				return $_symTable->findRecursive('real');
+			case Token::CHARACTER_STRING:
+				return $_symTable->findRecursive('string');
+			default:
+				throw new \Exception('CONST TYPE NOT IMPLEMENTED YET!');
+		}
+	}
+
 	static public function equal($a, $b)
 	{
 		return get_class($a) == get_class($b);
+	}
+
+	public function isConvertableTo($type)
+	{
+		return get_class($this) == get_class($type);
 	}
 }

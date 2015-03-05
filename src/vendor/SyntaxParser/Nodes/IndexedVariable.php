@@ -5,59 +5,47 @@ namespace vendor\SyntaxParser\Nodes;
 use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
+use vendor\Exception\SemanticException;
 
 class IndexedVariable extends Node
 {
     private $array = null;
     private $indexes = null;
+    public $symType = null;
 
-    static public function parse($scanner, $array)
+    public function __construct($scanner, $_symTable, $array)
     {
-        $indexes = [];
-        // parent::eofLessNext($scanner, ['<INDEX-EXPRESSION>']);
+        $arrayType = $array->variable->symType;
+        if (!is_a($arrayType, 'vendor\SemanticParser\Nodes\SymArrayType')) {
+            SemanticException::varAccessTypeMismatch($scanner, $arrayType, 'array');
+        }
+        $this->array = $array;
+        $this->indexes = [];
         $continue = true;
+        $idx = 0;
         while (!$scanner->get()->isOperator(']')) {
             if (!$continue) {
-                echo "here";
                 parent::simpleException($scanner, ["<OPERATOR ']'>"]);
             }
-            $indexes[] = Expression::parse($scanner);
+            $this->indexes[$idx] = new Expression($scanner, $_symTable);
+            if (!$arrayType->checkIndex($this->indexes[$idx], $idx, $_symTable)) {
+                SemanticException::raw($scanner, "Array index type mismatch");
+            }
+            $idx++;
             $continue = $scanner->get()->isOperator(',');
-            $expected = $continue ? ['<INDEX-EXPRESSION>'] : ["<OPERATOR ']'>"];
             if ($scanner->get()->isOperator(']')) {
                 break;
             }
-            parent::eofLessNext($scanner, $expected);
+            $scanner->next();
         }
+        if ($idx != count($arrayType->dimensions)) {
+            SemanticException::raw($scanner, "Array should be dereferenced completely");
+        }
+        $this->symType = $arrayType->type;
         if ($continue) {
             parent::simpleException($scanner, ['<INDEX-EXPRESSION>']);
         }
         $scanner->next();
-        return new IndexedVariable($array, $indexes);
-    }
-
-
-    static public function firstTokens()
-    {
-        return ['<INDEX-EXPRESSION>'];
-    }
-
-    public function __construct($array, $indexes)
-    {
-        $this->array = $array;
-        $this->indexes = $indexes;
-    }
-
-    public function toArray()
-    {
-        return [
-            "IndexedVariable" => [
-                "ArrayVariable" => $this->array->toArray(),
-                "Indexes" => array_map(function($expr) {
-                    return ["IndexExpression" => $expr->toArray()];
-                }, $this->indexes)
-            ]
-        ];
     }
 
     public function toIdArray(&$id)
@@ -88,6 +76,10 @@ class IndexedVariable extends Node
                     "id" => ++$id,
                     "name" => "indexes",
                     "children" => $indexes
+                ],
+                [
+                    "id" => ++$id,
+                    "name" => "type={$this->symType->identifier}",
                 ]
             ]
         ];

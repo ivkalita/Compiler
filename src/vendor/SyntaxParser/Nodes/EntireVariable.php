@@ -5,28 +5,23 @@ namespace vendor\SyntaxParser\Nodes;
 use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
+use vendor\Exception\SemanticException;
 
 class EntireVariable extends Node
 {
-    private $identifier = null;
+    public $identifier = null;
+    public $symType = null;
+    public $var = null;
 
-    static public function firstTokens()
+    public function __construct($scanner, $_symTable, $identifier)
     {
-        return ['<IDENTIFIER>'];
-    }
-
-    public function __construct($identifier)
-    {
+        $symbol = $_symTable->findRecursive($identifier->getValue());
+        if ($symbol == null || !is_a($symbol, 'vendor\SemanticParser\Nodes\SymVar')) {
+            SemanticException::undeclared($scanner, $identifier->getValue());
+        }
+        $this->symbol = $symbol;
+        $this->symType = $symbol->type;
         $this->identifier = $identifier;
-    }
-
-    public function toArray()
-    {
-        return [
-            "EntireVariable" => [
-                "identifier" => $this->identifier->getValue()
-            ]
-        ];
     }
 
     public function toIdArray(&$id)
@@ -38,6 +33,10 @@ class EntireVariable extends Node
                 [
                     "id" => ++$id,
                     "name" => "identifier=" . $this->identifier->getValue()
+                ],
+                [
+                    "id" => ++$id,
+                    "name" => "type={$this->symType->identifier}"
                 ]
             ]
         ];

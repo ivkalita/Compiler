@@ -6,57 +6,47 @@ use vendor\SyntaxParser\Nodes\Node;
 
 class ActualParamList extends Node
 {
-	private $params = null;
+	public $params = null;
 
-	static public function parse($scanner)
+	public function __construct($scanner, $_symTable)
 	{
-		// echo "ActualParamList::parse()\n";
-		$params = [];
+		$this->params = [];
 		if (!$scanner->get()->isLBracket()) {
 			parent::simpleException($scanner, ["<OPERATOR '('>"]);
 		}
 		$scanner->next();
 		if ($scanner->get()->isRBracket()) {
 			$scanner->next();
-			return new ActualParamList(null);
+			$this->params = [];
+			return;
 		}
-		$params[] = SimpleExpression::parse($scanner);
+		$this->params[] = new SimpleExpression($scanner, $_symTable);
 		while (!$scanner->get()->isRBracket()) {
 			if (!$scanner->get()->isOperator(',')) {
 				parent::simpleException($scanner, ["<OPERATOR ','>"]);
 			}
 			$scanner->next();
-			$params[] = SimpleExpression::parse($scanner);
+			$this->params[] = new SimpleExpression($scanner, $_symTable);
 		}
 		$scanner->next();
-		return new ActualParamList($params);
 	}
 
-	public function __construct($params)
-	{
-		$this->params = $params;
-	}
-
-	static public function firstTokens()
-	{
-		return ["<OPERATOR '('>"];
-	}
-
-	public function toArray()
-	{
-		$params = null;
-		$i = 0;
-		if ($this->params) {
-			$params = [];
-			foreach($this->params as &$param) {
-				$params["param_$i"] = $param->toArray();
-				$i++;
-			}
-		}
-		return [
-			'ActualParamList' => $params
-		];
-	}
+	//TODO: DC
+	// public function toArray()
+	// {
+	// 	$params = null;
+	// 	$i = 0;
+	// 	if ($this->params) {
+	// 		$params = [];
+	// 		foreach($this->params as &$param) {
+	// 			$params["param_$i"] = $param->toArray();
+	// 			$i++;
+	// 		}
+	// 	}
+	// 	return [
+	// 		'ActualParamList' => $params
+	// 	];
+	// }
 
 	public function toIdArray(&$id)
 	{

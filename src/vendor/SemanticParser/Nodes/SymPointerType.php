@@ -38,4 +38,12 @@ class SymPointerType extends SymType
 		Console::write("{$offset}{$this->identifier}\n");
 		$this->type->printInfo($offset);
 	}
+
+	public function isConvertableTo($type)
+	{
+		if (is_a($type, 'vendor\SemanticParser\Nodes\SymAliasType')) {
+			$type = $type->getBase();
+		}
+		return $this->identifier == $type->identifier;
+	}
 }

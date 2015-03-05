@@ -8,6 +8,7 @@ class Expression extends Node
 {
     //expression = expr [ relational-operator expr2 ]
     private $node = null;
+    public $symType = null;
 
     static private function isRelationalOperator($token)
     {
@@ -16,22 +17,17 @@ class Expression extends Node
             ($token->isKeyword('in'));
     }
 
-    static public function parse($scanner)
+    public function __construct($scanner, $_symTable)
     {
-        $expr = SimpleExpression::parse($scanner);
-        $node = $expr;
+        $expr = new SimpleExpression($scanner, $_symTable);
+        $this->node = $expr;
         if (self::isRelationalOperator($scanner->get())) {
             $operator = $scanner->get();
             $scanner->next();
-            $expr2 = SimpleExpression::parse($scanner);
-            $node = new BinOp($expr, $expr2, $operator);
+            $expr2 = new SimpleExpression($scanner, $_symTable);
+            $this->node = new BinOp($expr, $expr2, $operator);
         }
-        return new Expression($node);
-    }
-
-    public function __construct($node)
-    {
-        $this->node = $node;
+        $this->symType = $this->node->symType;
     }
 
     public function toIdArray(&$id)

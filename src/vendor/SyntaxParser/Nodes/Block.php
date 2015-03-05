@@ -42,7 +42,7 @@ class Block extends Node
         if ($cToken->isEq('function') || $cToken->isEq('procedure')) {
             $decFP = new FPPart($scanner, $_symTable);
         }
-        $this->statements = CompoundStatement::parse($scanner);
+        $this->statements = new CompoundStatement($scanner, $_symTable);
     }
 
     public function toIdArray(&$id)

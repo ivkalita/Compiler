@@ -11,19 +11,13 @@ class Statement extends Node
     private $statement = null;
     //null means empty-statement
 
-    static public function parse($scanner)
+    public function __construct($scanner, $_symTable)
     {
-        $statement = null;
+        $this->statement = null;
         while (!$scanner->get()->isSemicolon()) {
-            $statement = AssignmentStatement::parse($scanner);
+            $this->statement = new AssignmentStatement($scanner, $_symTable, null);
         }
         $scanner->next();
-        return new Statement($statement);
-    }
-
-    public function __construct($statement)
-    {
-        $this->statement = $statement;
     }
 
     public function toIdArray(&$id)

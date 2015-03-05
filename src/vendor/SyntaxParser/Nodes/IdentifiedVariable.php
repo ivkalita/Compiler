@@ -9,29 +9,17 @@ use vendor\Exception\SyntaxException;
 class IdentifiedVariable extends Node
 {
     private $pointer = null;
+    public $symType = null;
 
-    static public function parse($scanner, $pointer)
+    public function __construct($scanner, $_symTable, $pointer)
     {
-        return new IdentifiedVariable($pointer);
-    }
-
-    static public function firstTokens()
-    {
-        return ["<OPERATOR '^'>"];
-    }
-
-    public function __construct($pointer)
-    {
+        //TODO: TYPE CHECK
+        $pointerType = $pointer->variable->symType;
+        if (!is_a($pointerType, 'vendor\SemanticParser\Nodes\SymPointerType')) {
+            SemanticParser::varAccessTypeMismatch($scanner, $pointerType, 'pointer');
+        }
+        $this->symType = $pointerType->type;
         $this->pointer = $pointer;
-    }
-
-    public function toArray()
-    {
-        return [
-            "IdentifiedVariable" => [
-                "PointerVariable" => $this->pointer->toArray()
-            ]
-        ];
     }
 
     public function toIdArray(&$id)
