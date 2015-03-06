@@ -114,10 +114,14 @@ class Proc extends Node
                 "name" => $this->getInfo()
             ]
         );
-        array_push(
-            $node["children"],
-            $this->block->toIdArray($id)
-        );
+        if ($this->block != null) {
+            array_push(
+                $node["children"],
+                $this->block->toIdArray($id)
+            );
+        } else {
+            $node["name"] .= " forward";
+        }
         return $node;
     }
 }

@@ -12,13 +12,6 @@ class ConstDefPart extends Node
 
     public function __construct($scanner, $_symTable)
     {
-        $finalKeyWords = [
-            'type',
-            'var',
-            'function',
-            'procedure',
-            'begin'
-        ];
         $defs = [];
         while ($scanner->get()->isIdentifier()) {
             array_push($defs, new ConstDef($scanner, $_symTable));

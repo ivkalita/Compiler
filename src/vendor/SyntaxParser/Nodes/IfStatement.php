@@ -36,9 +36,6 @@ class IfStatement extends Node
         } else {
             parent::simpleException($scanner, ['<OPERATOR \';\'>', '<KEYWORD \'else\'>']);
         }
-        if (!$scanner->get()->isSemicolon()) {
-            return;
-        }
     }
 
     public function toIdArray(&$id)

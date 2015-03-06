@@ -32,8 +32,20 @@ class SymAliasType extends SymType
 			if (!is_a($type, 'vendor\SemanticParser\Nodes\SymAliasType')) {
 				return $type;
 			}
-			$type = $type->alised;
+			$type = $type->aliased;
 		}
+	}
+
+	static public function equal($a, $b)
+	{
+		if (is_a($a, 'vendor\SemanticParser\Nodes\SymAliasType')) {
+			$a = $a->getBase();
+		}
+		if (is_a($b, 'vendor\SemanticParser\Nodes\SymAliasType')) {
+			$b = $b->getBase();
+		}
+		$class = get_class($a);
+		return $class::equal($a, $b);
 	}
 
 	public function isConvertableTo($type)

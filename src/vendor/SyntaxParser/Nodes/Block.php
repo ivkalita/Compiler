@@ -19,6 +19,7 @@ class Block extends Node
 
     public function __construct($scanner, $_symTable)
     {
+        //TODO: DC
         if (!$scanner->get()->isKeyword()) {
             parent::simpleException($scanner, ['<KEYWORD>']);
         }
@@ -36,8 +37,8 @@ class Block extends Node
         }
         if ($cToken->isEq('var')) {
             $scanner->next();
-            $finalKeyWords = ['function', 'procedure', 'begin'];
-            $this->decVar = new VarDecPart($scanner, $_symTable, $finalKeyWords);
+            // $finalKeyWords = ['function', 'procedure', 'begin'];
+            $this->decVar = new VarDecPart($scanner, $_symTable);
             $cToken = $scanner->get();
         }
         if ($cToken->isEq('function') || $cToken->isEq('procedure')) {

@@ -10,7 +10,7 @@ class VarDecPart extends Node
 {
     private $varDecs = [];
 
-    public function __construct($scanner, $_symTable, $finalKeyWords)
+    public function __construct($scanner, $_symTable)
     {
         $decs = [];
         while ($scanner->get()->isIdentifier()) {

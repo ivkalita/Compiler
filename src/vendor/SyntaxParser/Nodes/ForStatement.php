@@ -26,7 +26,7 @@ class ForStatement extends Node
         $scanner->next();
         $this->counter = VariableAccess::parse($scanner, $_symTable);
         if (!SymSimpleType::equal($this->counter->symType, $integerType)) {
-            SemanticException::raw($scanner, 'Counter should be instance of integer');
+            SemanticException::raw($scanner, 'Counter must be integer');
         }
         if (!$scanner->get()->isOperator(':=')) {
             parent::simpleException($scanner, ['<OPERATOR \':=\'>']);

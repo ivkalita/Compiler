@@ -18,7 +18,7 @@
             }
             $out = file_get_contents($outdir . "trees/$file");
             if (strpos($out, 'exception') !== false) {
-                $out = str_replace("\n", "  ", str_replace("\"", "'", $out));
+                $out = str_replace("<", "'", str_replace(">", "'", str_replace("\n", "  ", str_replace("\"", "'", $out))));
                 $trees[] = '{"id":0, name:"' . $out . '"}';
             } else {
                 $trees[] = $out;

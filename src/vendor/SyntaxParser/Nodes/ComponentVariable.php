@@ -16,6 +16,9 @@ class ComponentVariable extends Node
     public function __construct($scanner, $_symTable, $record)
     {
         $recType = $record->variable->symType;
+        if (is_a($recType, 'vendor\SemanticParser\Nodes\SymAliasType')) {
+            $recType = $recType->getBase();
+        }
         if (!is_a($recType, 'vendor\SemanticParser\Nodes\SymRecordType')) {
             SemanticException::varAccessTypeMismatch($scanner, $recType, 'record');
         }
