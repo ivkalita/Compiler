@@ -25,7 +25,7 @@ class AssignmentStatement extends Node
         $this->rightPart = new Expression($scanner, $_symTable);
         $class = get_class($this->rightPart->symType);
         if (!$class::equal($this->rightPart->symType, $this->leftPart->symType)) {
-            $this->leftPart = new TypeCast($this->leftPart, $this->rightPart->symType);
+            $this->rightPart = new TypeCast($this->rightPart, $this->leftPart->symType);
         }
     }
 

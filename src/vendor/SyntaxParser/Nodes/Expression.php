@@ -14,7 +14,7 @@ class Expression extends Node
     {
         return
             ($token->isOperator() && in_array($token->getValue(), ['=', '<>', '>', '<', '<=', '>='])) ||
-            ($token->isKeyword('in'));
+            ($token->isKeyword() && in_array($token->getValue(), ['and', 'or', 'xor']));
     }
 
     public function __construct($scanner, $_symTable)
@@ -25,7 +25,7 @@ class Expression extends Node
             $operator = $scanner->get();
             $scanner->next();
             $expr2 = new SimpleExpression($scanner, $_symTable);
-            $this->node = new BinOp($expr, $expr2, $operator);
+            $this->node = new BinOp($expr, $expr2, $operator, $_symTable);
         }
         $this->symType = $this->node->symType;
     }

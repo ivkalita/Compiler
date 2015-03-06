@@ -41,6 +41,26 @@ class Factor extends Node
 		}
 		if ($scanner->get()->isIdentifier()) {
 			$identifier = $scanner->get();
+			$symbol = $_symTable->findRecursive($identifier->getValue());
+			if (is_a($symbol, 'vendor\SemanticParser\Nodes\SymType')) {
+				$scanner->next();
+				if (!$scanner->get()->isLBracket()) {
+					parent::simpleException($scanner, ['<OPERATOR \'(\'>']);
+				}
+				$scanner->next();
+				$expression = new Expression($scanner, $_symTable);
+				if (!$scanner->get()->isRBracket()) {
+					parent::simpleException($scanner, ["<OPERATOR ')'>"]);
+				}
+				$scanner->next();
+				$class = get_class($expression->symType);
+				if (!$class::equal($expression->symType, $symbol)) {
+					$expression = new TypeCast($expression, $symbol);
+				}
+				$this->node = $expression;
+				$this->symType = $this->node->symType;
+				return;
+			}
 			$scanner->next();
 			if ($scanner->get()->isLBracket()) {
 				$actualParamList = new ActualParamList($scanner, $_symTable);
@@ -51,7 +71,7 @@ class Factor extends Node
 			$this->symType = $this->node->symType;
 			return;
 		}
-		parent::simpleException($scanner, ['<FACTOR>']);
+		// parent::simpleException($scanner, ['<FACTOR>']);
 	}
 
 	public function toIdArray(&$id)

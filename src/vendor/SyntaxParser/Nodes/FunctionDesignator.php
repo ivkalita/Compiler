@@ -13,12 +13,14 @@ class FunctionDesignator extends Node
 	public $symType = null;
 	public $symbol = null;
 
-	public function __construct($identifier, $paramList, $_symTable)
+	public function __construct($identifier, $paramList, $_symTable, $isFunc = true)
 	{
 		$symFunc = $_symTable->findRecursive($identifier->getValue());
-		if ($symFunc == null || !is_a($symFunc, 'vendor\SemanticParser\Nodes\SymFunc')) {
-			//TODO: Throw exceptions like identifier <$identifier> is not a function
-			SemanticException::undeclared($identifier->getValue());
+		if ($isFunc) {
+			if ($symFunc == null || !is_a($symFunc, 'vendor\SemanticParser\Nodes\SymFunc')) {
+				//TODO: Throw exceptions like identifier <$identifier> is not a function
+				SemanticException::undeclared(null, $identifier->getValue());
+			}
 		}
 		$symFuncArgs = $symFunc->getArgs();
 		if (count($paramList->params) != count($symFuncArgs)) {
@@ -30,7 +32,9 @@ class FunctionDesignator extends Node
 				$paramList->params[$i] = new TypeCast($paramList->params[$i], $symFuncArgs[$i]->type);
 			}
 		}
-		$this->symType = $symFunc->returnType;
+		if ($isFunc) {
+			$this->symType = $symFunc->returnType;
+		}
 		$this->symbol = $symFunc;
 		$this->identifier = $identifier;
 		$this->paramList = $paramList;
@@ -40,7 +44,7 @@ class FunctionDesignator extends Node
 	{
 		$node = [
 			"id" => $id,
-			"name" => "FunctionDesignator",
+			"name" => ($this->symType == null ? "ProcedureDesignator" : "FunctionDesignator"),
 			"children" => [
 				[
 					"id" => ++$id,
@@ -51,13 +55,15 @@ class FunctionDesignator extends Node
 		if ($this->paramList) {
 			array_push($node["children"], $this->paramList->toIdArray(++$id));
 		}
-		array_push(
-			$node["children"],
-			[
-				"id" => $id++,
-				"name" => "returnType={$this->symType->identifier}"
-			]
-		);
+		if ($this->symType != null) {
+			array_push(
+				$node["children"],
+				[
+					"id" => $id++,
+					"name" => "returnType={$this->symType->identifier}"
+				]
+			);
+		}
 		return $node;
 	}
 }

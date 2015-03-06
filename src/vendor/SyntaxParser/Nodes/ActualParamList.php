@@ -31,23 +31,6 @@ class ActualParamList extends Node
 		$scanner->next();
 	}
 
-	//TODO: DC
-	// public function toArray()
-	// {
-	// 	$params = null;
-	// 	$i = 0;
-	// 	if ($this->params) {
-	// 		$params = [];
-	// 		foreach($this->params as &$param) {
-	// 			$params["param_$i"] = $param->toArray();
-	// 			$i++;
-	// 		}
-	// 	}
-	// 	return [
-	// 		'ActualParamList' => $params
-	// 	];
-	// }
-
 	public function toIdArray(&$id)
 	{
 		$params = null;

@@ -9,6 +9,7 @@ use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
 use vendor\Exception\SemanticException;
 use vendor\SemanticParser\Nodes\SymVar;
+use vendor\Utility\Flags;
 
 class Func extends Proc
 {
@@ -56,5 +57,20 @@ class Func extends Proc
         }
         $func->block = new Block($scanner, $symTable);
         $_symTable->appendForwardable($func->symbol);
+        return $func;
+    }
+
+    protected function getInfo()
+    {
+        $info = parent::getInfo();
+        $info .= ": {$this->symbol->returnType->identifier}";
+        return $info;
+    }
+
+    public function toIdArray(&$id)
+    {
+        $node = parent::toIdArray($id);
+        $node["name"] = "Function";
+        return $node;
     }
 }

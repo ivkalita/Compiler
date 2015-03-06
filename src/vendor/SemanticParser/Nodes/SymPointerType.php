@@ -39,11 +39,31 @@ class SymPointerType extends SymType
 		$this->type->printInfo($offset);
 	}
 
+	public function getBase()
+	{
+		$type = $this->type;
+		while (true) {
+			if (is_a($type, 'vendor\SemanticParser\Nodes\SymAliasType')) {
+				$type = $type->getBase();
+			} else if (is_a($type, 'vendor\SemanticParser\Nodes\SymPointerType')) {
+				$type = $type->type;
+			} else {
+				break;
+			}
+		}
+	}
+
 	public function isConvertableTo($type)
 	{
-		if (is_a($type, 'vendor\SemanticParser\Nodes\SymAliasType')) {
+		if (is_a($type, 'vendor\SemanticParser\Nodes\SymAliasType') || is_a($type, 'vendor\SemanticParser\Nodes\SymPointerType')) {
 			$type = $type->getBase();
 		}
-		return $this->identifier == $type->identifier;
+		return self::equal($this, $type);
+	}
+
+	static public function equal($a, $b)
+	{
+		$bothArePtrs = is_a($a, 'vendor\SemanticParser\Nodes\SymPointerType') && is_a($b, 'vendor\SemanticParser\Nodes\SymPointerType');
+		return $bothArePtrs && $a->type->identifier == $b->type->identifier;
 	}
 }

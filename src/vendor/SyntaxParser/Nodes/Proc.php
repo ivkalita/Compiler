@@ -10,6 +10,7 @@ use vendor\SemanticParser\Nodes\SymArg;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
 use vendor\Exception\SemanticException;
+use vendor\Utility\Flags;
 
 class Proc extends Node
 {
@@ -85,5 +86,38 @@ class Proc extends Node
         }
         $proc->block = new Block($scanner, $symTable);
         $_symTable->appendForwardable($proc->symbol);
+        return $proc;
+    }
+
+    protected function getInfo()
+    {
+        $info = "{$this->symbol->identifier}(";
+        $args = [];
+        foreach($this->symbol->getArgs() as $arg) {
+            $args[] = "{$arg->identifier}:{$arg->type->identifier}";
+        }
+        $info .= implode(',', $args) . ')';
+        return $info;
+    }
+
+    public function toIdArray(&$id)
+    {
+        $node = [
+            "id"       => $id++,
+            "name"     => "Procedure",
+            "children" => []
+        ];
+        array_push(
+            $node["children"],
+            [
+                "id" => $id++,
+                "name" => $this->getInfo()
+            ]
+        );
+        array_push(
+            $node["children"],
+            $this->block->toIdArray($id)
+        );
+        return $node;
     }
 }

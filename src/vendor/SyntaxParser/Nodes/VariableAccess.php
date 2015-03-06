@@ -55,14 +55,6 @@ class VariableAccess extends Node
         $this->symType = $this->variable->symType;
     }
 
-    //TODO: DC
-    // public function toArray()
-    // {
-    //     return [
-    //         "VariableAccess" => $this->variable->toArray()
-    //     ];
-    // }
-
     public function toIdArray(&$id)
     {
         return $this->variable->toIdArray($id);

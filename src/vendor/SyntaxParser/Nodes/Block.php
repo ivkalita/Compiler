@@ -6,6 +6,7 @@ use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
 use vendor\SemanticParser\Nodes\SymConst;
+use vendor\Utility\Flags;
 
 class Block extends Node
 {
@@ -30,7 +31,7 @@ class Block extends Node
         // echo $cToken->getStr();
         if ($cToken->isEq('type')) {
             $scanner->next();
-            $defType = new TypeDefPart($scanner, $_symTable);
+            $this->defType = new TypeDefPart($scanner, $_symTable);
             $cToken = $scanner->get();
         }
         if ($cToken->isEq('var')) {
@@ -40,20 +41,25 @@ class Block extends Node
             $cToken = $scanner->get();
         }
         if ($cToken->isEq('function') || $cToken->isEq('procedure')) {
-            $decFP = new FPPart($scanner, $_symTable);
+            $this->decFP = new FPPart($scanner, $_symTable);
         }
+        Flags::$funcDepth++;
         $this->statements = new CompoundStatement($scanner, $_symTable);
+        Flags::$funcDepth--;
     }
 
     public function toIdArray(&$id)
     {
         $node = [
-            "id"       => $id,
+            "id"       => $id++,
             "name"     => "Block",
             "children" => []
         ];
         if ($this->defConst) {
             array_push($node["children"], $this->defConst->toIdArray(++$id));
+        }
+        if ($this->decFP) {
+            array_push($node["children"], $this->decFP->toIdArray(++$id));
         }
         array_push($node["children"], $this->statements->toIdArray(++$id));
         return $node;

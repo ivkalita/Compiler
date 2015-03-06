@@ -27,4 +27,17 @@ class FPPart extends Node
             parent::simpleException($scanner, ['<IDENTIFIER>']);
         }
     }
+
+    public function toIdArray(&$id)
+    {
+        $node = [
+            "id"       => $id++,
+            "name"     => "Functions And Procedures",
+            "children" => []
+        ];
+        foreach($this->fps as $fp) {
+            array_push($node["children"], $fp->toIdArray($id));
+        }
+        return $node;
+    }
 }

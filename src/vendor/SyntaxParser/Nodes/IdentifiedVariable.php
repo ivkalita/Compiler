@@ -13,7 +13,6 @@ class IdentifiedVariable extends Node
 
     public function __construct($scanner, $_symTable, $pointer)
     {
-        //TODO: TYPE CHECK
         $pointerType = $pointer->variable->symType;
         if (!is_a($pointerType, 'vendor\SemanticParser\Nodes\SymPointerType')) {
             SemanticParser::varAccessTypeMismatch($scanner, $pointerType, 'pointer');

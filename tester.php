@@ -272,7 +272,7 @@
         $treeOut = json_decode(file_get_contents($out), true);
         $treeEta = json_decode(file_get_contents($etalon), true);
         if ($treeOut == null || $treeEta == null) {
-            return false;
+            return trim(file_get_contents($out)) == trim(file_get_contents($etalon));
         }
         return arrayCmp($treeEta, $treeOut);
     }

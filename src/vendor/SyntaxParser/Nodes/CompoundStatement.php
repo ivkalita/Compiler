@@ -19,8 +19,18 @@ class CompoundStatement extends Node
         $scanner->next();
         while (!$scanner->get()->isKeyword('end')) {
             $this->statements[] = new Statement($scanner, $_symTable);
+            parent::semicolonPass($scanner);
         }
         $scanner->next();
+    }
+
+    static public function smartParse($scanner, $_symTable)
+    {
+        if ($scanner->get()->isKeyword('begin')) {
+            return new CompoundStatement($scanner, $_symTable);
+        } else {
+            return new Statement($scanner, $_symTable);
+        }
     }
 
     public function toIdArray(&$id)

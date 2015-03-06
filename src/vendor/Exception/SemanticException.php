@@ -69,6 +69,11 @@
             );
         }
 
+        static public function illegalControlStatement($scanner, $identifier)
+        {
+            self::raw($scanner, "Illegal usage of control statement {$identifier}");
+        }
+
         static public function invalidArgCount($identifier)
         {
             self::raw(null, "Invalid argument count for calling <$identifier>");

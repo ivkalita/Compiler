@@ -16,6 +16,7 @@ class BinOp extends Node
         //TODO: Clear code
         $integerType = $_symTable->findRecursive('integer');
         $realType = $_symTable->findRecursive('real');
+        $booleanType = $_symTable->findRecursive('boolean');
         $leftType = $left->symType;
         if (get_class($leftType) == 'vendor\SemanticParser\Nodes\SymAliasType') {
             $leftType = $leftType->getBase();
