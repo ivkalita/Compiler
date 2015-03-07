@@ -28,9 +28,7 @@ class ForStatement extends Node
         parent::requireOperator($scanner, ':=');
         $scanner->next();
         $this->from = new Expression($scanner, $_symTable);
-        if (!SymSimpleType::equal($this->from->symType, Globals::getSimpleType('integer'))) {
-            $this->from = new TypeCast($this->from, Globals::getSimpleType('integer'));
-        }
+        $this->from = TypeCast::tryTypeCast($this->from, 'integer');
         switch($scanner->get()->getValue()) {
             case 'to':
                 $this->direction = self::DIRECTION_ASC;
@@ -43,9 +41,7 @@ class ForStatement extends Node
         }
         $scanner->next();
         $this->to = new Expression($scanner, $_symTable);
-        if (!SymSimpleType::equal($this->to->symType, Globals::getSimpleType('integer'))) {
-            $this->to = new TypeCast($this->to, Globals::getSimpleType('integer'));
-        }
+        $this->to = TypeCast::tryTypeCast($this->to, 'integer');
         parent::requireKeyword($scanner, 'do');
         $scanner->next();
         Globals::$loopDepth++;

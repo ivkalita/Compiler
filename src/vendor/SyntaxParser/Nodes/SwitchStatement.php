@@ -9,7 +9,7 @@ use vendor\Utility\Globals;
 
 class SwitchStatement extends Node
 {
-    public $clause = null;
+    public $condition = null;
     public $cases = [];
     public $default = null;
 
@@ -18,7 +18,7 @@ class SwitchStatement extends Node
     {
         parent::requireKeyword($scanner, 'case');
         $scanner->next();
-        $this->clause = new Expression($scanner, $_symTable);
+        $this->condition = new Expression($scanner, $_symTable);
         parent::requireKeyword($scanner, 'of');
         $scanner->next();
         Globals::$switchDepth++;
@@ -29,16 +29,13 @@ class SwitchStatement extends Node
                 parent::semicolonPass($scanner);
                 break;
             }
-            $caseClause = new Expression($scanner, $_symTable);
-            $class = get_class($caseClause->symType);
-            if (!$class::equal($caseClause->symType, $this->clause->symType)) {
-                $caseClause = new TypeCast($caseClause, $this->clause->symType);
-            }
+            $caseCondition = new Expression($scanner, $_symTable);
+            $caseCondition = TypeCast::tryTypeCast($caseCondition, $this->condition->symType, false);
             parent::requireOperator($scanner, ':');
             $scanner->next();
             $caseStatements = CompoundStatement::smartParse($scanner, $_symTable);
             $this->cases[] = [
-                "clause" => $caseClause,
+                "condition" => $caseCondition,
                 "statements" => $caseStatements
             ];
             parent::semicolonPass($scanner);
@@ -57,18 +54,18 @@ class SwitchStatement extends Node
             "id" => $id++,
             "name" => "Switch-statement"
         ];
-        $clause = [
+        $condition = [
             "id" => $id++,
-            "name" => "Clause"
+            "name" => "Condition"
         ];
-        $clause["children"] = [$this->clause->toIdArray($id)];
-        $node["children"] = [$clause];
+        $condition["children"] = [$this->condition->toIdArray($id)];
+        $node["children"] = [$condition];
         for ($i = 0; $i < count($this->cases); $i++) {
-            $caseClause = [
+            $caseCondition = [
                 "id" => $id++,
-                "name" => "caseClause"
+                "name" => "caseCondition"
             ];
-            $caseClause["children"] = [$this->cases[$i]["clause"]->toIdArray($id)];
+            $caseCondition["children"] = [$this->cases[$i]["condition"]->toIdArray($id)];
             $caseStatements = [
                 "id" => $id++,
                 "name" => "caseStmts"
@@ -78,7 +75,7 @@ class SwitchStatement extends Node
             $case = [
                 "id" => $id++,
                 "name" => "Case",
-                "children" => [$caseClause, $caseStatements]
+                "children" => [$caseCondition, $caseStatements]
             ];
             array_push($node["children"], $case);
         }

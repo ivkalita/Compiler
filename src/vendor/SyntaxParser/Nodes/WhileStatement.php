@@ -17,9 +17,7 @@ class WhileStatement extends Node
         parent::requireKeyword($scanner, 'while');
         $scanner->next();
         $this->condition = new Expression($scanner, $_symTable);
-        if (!SymSimpleType::equal($this->condition->symType, Globals::getSimpleType('boolean'))) {
-            $this->condition = new TypeCast($this->condition, Globals::getSimpleType('boolean'));
-        }
+        $this->condition = TypeCast::tryTypeCast($this->condition, 'boolean');
         parent::requireKeyword($scanner, 'do');
         $scanner->next();
         Globals::$loopDepth++;

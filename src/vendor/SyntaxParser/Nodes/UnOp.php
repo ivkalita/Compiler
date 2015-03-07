@@ -16,7 +16,8 @@ class UnOp extends Node
 	{
 		if (
 			!SymSimpleType::equal($operand->symType, Globals::getSimpleType('integer')) &&
-			!SymSimpleType::equal($operand->symType, Globals::getSimpleType('real')) {
+			!SymSimpleType::equal($operand->symType, Globals::getSimpleType('real'))
+		) {
 			SemanticException::invalidTypeCast($operand->symType, Globals::getSimpleType('real'));
 		}
 		$this->symType = $operand->symType;

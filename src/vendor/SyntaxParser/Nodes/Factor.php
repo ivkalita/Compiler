@@ -69,7 +69,6 @@ class Factor extends Node
 			$this->symType = $this->node->symType;
 			return;
 		}
-		// parent::simpleException($scanner, ['<FACTOR>']);
 	}
 
 	public function toIdArray(&$id)

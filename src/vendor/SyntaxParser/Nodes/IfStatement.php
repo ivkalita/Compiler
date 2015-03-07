@@ -17,9 +17,7 @@ class IfStatement extends Node
         $scanner->next();
         $this->condition = new Expression($scanner, $_symTable);
         $class = get_class($this->condition->symType);
-        if (!$class::equal($this->condition->symType, Globals::getSimpleType('boolean'))) {
-            $this->condition = new TypeCast($this->condition, $booleanType);
-        }
+        $this->condition = TypeCast::tryTypeCast($this->condition, 'boolean');
         parent::requireKeyword($scanner, 'then');
         $scanner->next();
         $this->trueStatements = CompoundStatement::smartParse($scanner, $_symTable);
