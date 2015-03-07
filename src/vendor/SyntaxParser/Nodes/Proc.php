@@ -10,7 +10,7 @@ use vendor\SemanticParser\Nodes\SymArg;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
 use vendor\Exception\SemanticException;
-use vendor\Utility\Flags;
+use vendor\Utility\Globals;
 
 class Proc extends Node
 {
@@ -46,9 +46,7 @@ class Proc extends Node
                     $scanner->next();
                 }
                 if (count($identifiers) > 0) {
-                    if (!$scanner->get()->isOperator(':')) {
-                        parent::simpleException($scanner, ['<OPERATOR \':\'>']);
-                    }
+                    parent::requireOperator($scanner, ':');
                     $scanner->next();
                     $type = SymType::parseFixed($scanner, $symTable);
                     foreach($identifiers as $arg) {

@@ -7,6 +7,7 @@ use vendor\Utility\Console;
 use vendor\Exception\SemanticException;
 use vendor\SemanticParser\Nodes\SymType;
 use vendor\TokenParser\Token;
+use vendor\Utility\Globals;
 
 class SymType extends Symbol
 {
@@ -89,14 +90,16 @@ class SymType extends Symbol
 			case Token::UNSIGNED_INTEGER:
 			case Token::SIGNED_NUMBER:
 			case Token::SIGNED_INTEGER:
-				return $_symTable->findRecursive('integer');
+				return Globals::getSimpleType('integer');
 			case Token::UNSIGNED_REAL:
 			case Token::UNSIGNED_REAL_E:
 			case Token::SIGNED_REAL:
 			case Token::SIGNED_REAL_E:
-				return $_symTable->findRecursive('real');
+				return Globals::getSimpleType('real');
 			case Token::CHARACTER_STRING:
-				return $_symTable->findRecursive('string');
+				return Globals::getSimpleType('string');
+			case Token::BOOLEAN_CONST:
+				return Globals::getSimpleType('boolean');
 			default:
 				throw new \Exception('CONST TYPE NOT IMPLEMENTED YET!');
 		}

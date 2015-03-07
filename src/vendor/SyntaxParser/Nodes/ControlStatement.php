@@ -4,7 +4,7 @@ namespace vendor\SyntaxParser\Nodes;
 
 use vendor\SyntaxParser\Nodes\Node;
 use vendor\Exception\SemanticException;
-use vendor\Utility\Flags;
+use vendor\Utility\Globals;
 
 class ControlStatement extends Node
 {
@@ -20,12 +20,12 @@ class ControlStatement extends Node
         $valid = false;
         switch ($identifier->getValue()) {
             case 'break':
-                $valid = Flags::$switchDepth > 0;
+                $valid = Globals::$switchDepth > 0;
             case 'continue':
-                $valid |= Flags::$loopDepth > 0;
+                $valid |= Globals::$loopDepth > 0;
                 break;
             case 'exit':
-                $valid |= Flags::$funcDepth > 0;
+                $valid |= Globals::$funcDepth > 0;
                 break;
             default:
                 throw new \Exception("Control keyword " . $identifier->getValue() . " not implemented yet");

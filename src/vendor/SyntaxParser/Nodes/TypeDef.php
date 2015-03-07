@@ -18,9 +18,8 @@ class TypeDef extends Node
             parent::simpleException($scanner, ['<IDENTIFIER>']);
         }
         $identifier = $scanner->get();
-        if (!$scanner->nget()->isOperator('=')) {
-            parent::simpleException($scanner, ["<OPERATOR '='"]);
-        }
+        $scanner->next();
+        parent::requireOperator($scanner, '=');
         $scanner->next();
         $this->symbol = SymType::parse($scanner, $_symTable, $identifier->getValue());
         $_symTable->append($this->symbol);

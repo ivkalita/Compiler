@@ -82,6 +82,7 @@
             'type',
             'until',
             'var',
+            'xor',
             'while',
             'with'
         ];
@@ -464,7 +465,11 @@
                             $this->currentToken = new Token(
                                 in_array($value, self::$KEYWORDS)
                                     ? Token::KEYWORD
-                                    : Token::IDENTIFIER,
+                                    : (
+                                        in_array($value, ['true', 'false'])
+                                        ? Token::BOOLEAN_CONST
+                                        : Token::IDENTIFIER
+                                    ),
                                 $value, $text, $this->point
                             );
                             return true;

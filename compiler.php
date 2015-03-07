@@ -41,7 +41,7 @@
             TreeViewer::genSyntaxHtml($params['html'], "result", $syntaxTree);
         } else {
             $syntaxTree = $program->toIdArray();
-            Console::write(json_encode($syntaxTree));
+            Console::write(json_encode($syntaxTree, JSON_PRETTY_PRINT));
         }
     } else if ($params['table-only']) {
         try {

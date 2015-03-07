@@ -6,7 +6,7 @@ use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
 use vendor\SemanticParser\Nodes\SymConst;
-use vendor\Utility\Flags;
+use vendor\Utility\Globals;
 
 class Block extends Node
 {
@@ -19,17 +19,12 @@ class Block extends Node
 
     public function __construct($scanner, $_symTable)
     {
-        //TODO: DC
-        if (!$scanner->get()->isKeyword()) {
-            parent::simpleException($scanner, ['<KEYWORD>']);
-        }
         $cToken = $scanner->get();
         if ($cToken->isEq('const')) {
             $scanner->next();
             $this->defConst = new ConstDefPart($scanner, $_symTable);
             $cToken = $scanner->get();
         }
-        // echo $cToken->getStr();
         if ($cToken->isEq('type')) {
             $scanner->next();
             $this->defType = new TypeDefPart($scanner, $_symTable);
@@ -37,16 +32,15 @@ class Block extends Node
         }
         if ($cToken->isEq('var')) {
             $scanner->next();
-            // $finalKeyWords = ['function', 'procedure', 'begin'];
             $this->decVar = new VarDecPart($scanner, $_symTable);
             $cToken = $scanner->get();
         }
         if ($cToken->isEq('function') || $cToken->isEq('procedure')) {
             $this->decFP = new FPPart($scanner, $_symTable);
         }
-        Flags::$funcDepth++;
+        Globals::$funcDepth++;
         $this->statements = new CompoundStatement($scanner, $_symTable);
-        Flags::$funcDepth--;
+        Globals::$funcDepth--;
     }
 
     public function toIdArray(&$id)

@@ -13,9 +13,7 @@ class CompoundStatement extends Node
     public function __construct($scanner, $_symTable)
     {
         $this->statements = [];
-        if (!$scanner->get()->isKeyword('begin')) {
-            parent::simpleException($scanner, ["<KEYWORD 'begin'>"]);
-        }
+        parent::requireKeyword($scanner, 'begin');
         $scanner->next();
         while (!$scanner->get()->isKeyword('end')) {
             $this->statements[] = new Statement($scanner, $_symTable);

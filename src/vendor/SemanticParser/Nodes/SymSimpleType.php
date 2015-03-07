@@ -23,21 +23,21 @@ class SymSimpleType extends SymType
 		$this->CMP_TABLE = [
 			self::$INTEGER => [
 				self::$INTEGER => true,
-				self::$BOOLEAN => true,
+				self::$BOOLEAN => false,
 				self::$REAL    => true,
-				self::$STRING  => true
+				self::$STRING  => false
 			],
 			self::$REAL => [
 				self::$INTEGER => false,
 				self::$REAL => true,
-				self::$BOOLEAN => true,
-				self::$STRING => true
+				self::$BOOLEAN => false,
+				self::$STRING => false
 			],
 			self::$BOOLEAN => [
-				self::$INTEGER => true,
-				self::$REAL => true,
+				self::$INTEGER => false,
+				self::$REAL => false,
 				self::$BOOLEAN => true,
-				self::$STRING => true
+				self::$STRING => false
 			],
 			self::$STRING => [
 				self::$INTEGER => false,

@@ -3,28 +3,24 @@
 namespace vendor\SyntaxParser\Nodes;
 
 use vendor\SyntaxParser\Nodes\Node;
+use vendor\Utility\Globals;
 
 class IfStatement extends Node
 {
-    public $clause = null;
+    public $condition = null;
     public $trueStatements = null;
     public $falseStatements = null;
 
     public function __construct($scanner, $_symTable)
     {
-        if (!$scanner->get()->isKeyword('if')) {
-            parent::SimpleException($scanner, ['<KEYWORD \'if\'>']);
-        }
+        parent::requireKeyword($scanner, 'if');
         $scanner->next();
-        $this->clause = new Expression($scanner, $_symTable);
-        $class = get_class($this->clause->symType);
-        $booleanType = $_symTable->findRecursive('boolean');
-        if (!$class::equal($booleanType, $this->clause->symType)) {
-            $this->clause = new TypeCast($this->clause, $booleanType);
+        $this->condition = new Expression($scanner, $_symTable);
+        $class = get_class($this->condition->symType);
+        if (!$class::equal($this->condition->symType, Globals::getSimpleType('boolean'))) {
+            $this->condition = new TypeCast($this->condition, $booleanType);
         }
-        if (!$scanner->get()->isKeyword('then')) {
-            parent::simpleException($scanner, ['<KEYWORD \'then\'>']);
-        }
+        parent::requireKeyword($scanner, 'then');
         $scanner->next();
         $this->trueStatements = CompoundStatement::smartParse($scanner, $_symTable);
         if ($scanner->get()->isSemicolon()) {
@@ -45,10 +41,10 @@ class IfStatement extends Node
             "name" => "If-statement",
             "children" => []
         ];
-        $clause = [
+        $condition = [
             "id" => $id++,
-            "name" => "Clause",
-            "children" => [$this->clause->toIdArray($id)]
+            "name" => "Condition",
+            "children" => [$this->condition->toIdArray($id)]
         ];
         $id++;
         if ($this->trueStatements) {
@@ -75,7 +71,7 @@ class IfStatement extends Node
         }
         array_push(
             $node["children"],
-            $clause
+            $condition
         );
         return $node;
     }

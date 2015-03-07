@@ -20,9 +20,7 @@ class ConstDef extends Node
             parent::simpleException($scanner, ['<IDENTIFIER>']);
         }
         $scanner->next();
-        if (!$scanner->get()->isOperator('=')) {
-            parent::simpleException($scanner, ["<OPERATOR '='>"]);
-        }
+        parent::requireOperator($scanner, '=');
         $constant = $scanner->nget();
         if (!$constant->isConst()) {
             parent::simpleException($scanner, ['<CONSTANT']);

@@ -11,9 +11,7 @@ class ActualParamList extends Node
 	public function __construct($scanner, $_symTable)
 	{
 		$this->params = [];
-		if (!$scanner->get()->isLBracket()) {
-			parent::simpleException($scanner, ["<OPERATOR '('>"]);
-		}
+		parent::requireOperator($scanner, '(');
 		$scanner->next();
 		if ($scanner->get()->isRBracket()) {
 			$scanner->next();
@@ -22,9 +20,7 @@ class ActualParamList extends Node
 		}
 		$this->params[] = new SimpleExpression($scanner, $_symTable);
 		while (!$scanner->get()->isRBracket()) {
-			if (!$scanner->get()->isOperator(',')) {
-				parent::simpleException($scanner, ["<OPERATOR ','>"]);
-			}
+			parent::requireOperator($scanner, ',');
 			$scanner->next();
 			$this->params[] = new SimpleExpression($scanner, $_symTable);
 		}

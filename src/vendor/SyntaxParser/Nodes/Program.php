@@ -6,6 +6,7 @@ use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
 use vendor\SemanticParser\Nodes\SymTable;
+use vendor\Utility\Globals;
 
 class Program extends Node
 {
@@ -17,12 +18,11 @@ class Program extends Node
     {
         $scanner->next();
         $this->symTable = new SymTable(null);
+        Globals::init($this->symTable);
         $this->heading = new ProgramHeading($scanner);
         parent::semicolonPass($scanner);
         $this->block = new Block($scanner, $this->symTable);
-        if (!$scanner->get()->isOperator('.')) {
-            parent::simpleException($scanner, ["<OPERATOR '.'>"]);
-        }
+        parent::requireOperator($scanner, '.');
         $scanner->next();
         if (!$scanner->get()->isEOF()) {
             parent::simpleException($scanner, ['<EOF>']);

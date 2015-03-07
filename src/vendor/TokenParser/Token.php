@@ -16,6 +16,7 @@
         const SIGNED_REAL       = "SIGNED REAL";
         const SIGNED_REAL_E     = "SIGNED REAL E";
         const CHARACTER_STRING  = "CHARACTER STRING";
+        const BOOLEAN_CONST     = "BOOLEAN CONST";
         const EOF               = "END OF FILE";
         protected $value;
         public $point;
@@ -92,6 +93,22 @@
                 (
                     $this->type === Token::OPERATOR &&
                     in_array($this->value, ['-', '+'])
+                ) ||
+                (
+                    $this->type === Token::KEYWORD &&
+                    in_array($this->value, ['or', 'xor'])
+                );
+        }
+
+        public function isRelational()
+        {
+            return
+                (
+                    $this->isOperator() &&
+                    in_array($this->getValue(), ['=', '<>', '>', '<', '<=', '>='])
+                ) ||
+                (
+                    $this->isKeyword('in')
                 );
         }
 
@@ -124,7 +141,7 @@
             $isGeneralMult = $this->type === Token::OPERATOR &&
                 in_array($this->value, ['*', '/']);
             $isIntegerMult = $this->type === Token::KEYWORD &&
-                in_array($this->value, ['div', 'mod']);
+                in_array($this->value, ['div', 'mod', 'and']);
             return $isGeneralMult || $isIntegerMult;
         }
 
@@ -137,6 +154,7 @@
                         Token::UNSIGNED_INTEGER,
                         Token::UNSIGNED_REAL,
                         Token::UNSIGNED_REAL_E,
+                        Token::BOOLEAN_CONST
                     ]
                 );
 

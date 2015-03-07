@@ -20,9 +20,8 @@ class VarDec extends Node
             parent::simpleException($scanner, ['<IDENTIFIER>']);
         }
         $this->identifier = $scanner->get();
-        if (!$scanner->nget()->isOperator(':')) {
-            parent::simpleException($scanner, ['<OPERATOR \':\'>']);
-        }
+        $scanner->next();
+        parent::requireOperator($scanner, ':');
         $scanner->next();
         $type = SymType::parse($scanner, $_symTable, null);
         $this->symbol = new SymVar($this->identifier->getValue(), $type);

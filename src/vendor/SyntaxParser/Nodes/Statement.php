@@ -6,7 +6,7 @@ use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
 // use vendor\Exception\SemanticException;
-// use vendor\Utility\Flags;
+// use vendor\Utility\Globals;
 
 class Statement extends Node
 {
@@ -18,13 +18,6 @@ class Statement extends Node
         $this->statement = null;
         //TODO: change stupid check on something more internal
         $identifier = $scanner->get();
-        $symbol = $_symTable->findRecursive($identifier->getValue());
-        if ($symbol != null && get_class($symbol) == 'vendor\SemanticParser\Nodes\SymProc') {
-            $scanner->next();
-            $paramList = new ActualParamList($scanner, $_symTable);
-            $this->statement = new FunctionDesignator($identifier, $paramList, $_symTable, false);
-            return;
-        }
         if ($identifier->isKeyword()) {
             switch ($identifier->getValue()) {
                 case 'if':
@@ -45,6 +38,13 @@ class Statement extends Node
                     $this->statement = new ControlStatement($scanner, $_symTable);
                     return;
             }
+        }
+        $symbol = $_symTable->findRecursive($identifier->getValue());
+        if ($symbol != null && get_class($symbol) == 'vendor\SemanticParser\Nodes\SymProc') {
+            $scanner->next();
+            $paramList = new ActualParamList($scanner, $_symTable);
+            $this->statement = new FunctionDesignator($identifier, $paramList, $_symTable, false);
+            return;
         }
         $this->statement = new Expression($scanner, $_symTable);
         if ($scanner->get()->isOperator(':=')) {

@@ -5,6 +5,7 @@ namespace vendor\SyntaxParser\Nodes;
 use vendor\SyntaxParser\Nodes\Node;
 use vendor\TokenParser\Token;
 use vendor\SemanticParser\Nodes\SymType;
+use vendor\Utility\Globals;
 
 class Factor extends Node
 {
@@ -23,9 +24,7 @@ class Factor extends Node
 		if ($scanner->get()->isLBracket()) {
 			$scanner->next();
 			$this->node = new Expression($scanner, $_symTable);
-			if (!$scanner->get()->isRBracket()) {
-				parent::simpleException($scanner, ["<OPERATOR ')'>"]);
-			}
+			parent::requireOperator($scanner, ')');
 			$this->symType = $this->node->symType;
 			$scanner->next();
 			return;
@@ -34,9 +33,8 @@ class Factor extends Node
 			$this->keyword = $scanner->get();
 			$scanner->next();
 			$this->node = new Factor($scanner, $_symTable);
-			$this->symType = $_symTable->findRecursive('boolean');
-			$this->node = new TypeCast($this->node, $this->symType);
-			$scanner->next();
+			$this->node = TypeCast::tryTypeCast($this->node, 'boolean');
+			$this->symType = $this->node->symType;
 			return;
 		}
 		if ($scanner->get()->isIdentifier()) {

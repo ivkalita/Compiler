@@ -296,6 +296,7 @@
         @mkdir($out);
         $failedCnt = 0;
         $successCnt = 0;
+        $unknownCnt = 0;
         $inFiles = scandir($in);
         foreach($inFiles as &$inFile) {
             if ($inFile[0] == '.') {
@@ -316,6 +317,11 @@
             } catch (\Exception $e) {
                 echo "inFile:<$inFile>\noutFile:<$outFile>\n";
                 die($e);
+            }
+            if (!file_exists($etalonFileFull)) {
+                echo "$inFile...ETALON DOES NOT EXIST!\n";
+                $unknownCnt++;
+                continue;
             }
             if ($mode == 1) {
                 if (fileCmpLex($outFileFull, $etalonFileFull, $mode)) {
@@ -343,8 +349,8 @@
                 }
             }
         }
-        echo "SUCCESSED/FAILED\n";
-        echo "$successCnt/$failedCnt\n";
+        echo "SUCCESSED/FAILED/UNKNOWN\n";
+        echo "$successCnt/$failedCnt/$unknownCnt\n";
     }
 
     //argv = [0, in_dir, out_dir, etalon_dir, mode]

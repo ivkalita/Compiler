@@ -5,31 +5,26 @@ namespace vendor\SyntaxParser\Nodes;
 use vendor\SyntaxParser\Nodes\Node;
 use vendor\SemanticParser\Nodes\SymSimpleType;
 use vendor\Exception\SemanticException;
-use vendor\Utility\Flags;
+use vendor\Utility\Globals;
 
 class WhileStatement extends Node
 {
-    public $clause = null;
+    public $condition = null;
     public $statements = null;
 
     public function __construct($scanner, $_symTable)
     {
-        $booleanType = $_symTable->findRecursive('boolean');
-        if (!$scanner->get()->isKeyword('while')) {
-            parent::simpleException($scanner, ['<KEYWORD \'while\'>']);
-        }
+        parent::requireKeyword($scanner, 'while');
         $scanner->next();
-        $this->clause = new Expression($scanner, $_symTable);
-        if (!SymSimpleType::equal($this->clause->symType, $booleanType)) {
-            $this->clause = new TypeCast($this->clause, $booleanType);
+        $this->condition = new Expression($scanner, $_symTable);
+        if (!SymSimpleType::equal($this->condition->symType, Globals::getSimpleType('boolean'))) {
+            $this->condition = new TypeCast($this->condition, Globals::getSimpleType('boolean'));
         }
-        if (!$scanner->get()->isKeyword('do')) {
-            parent::simpleException($scanner, ['<KEYWORD \'do\'>']);
-        }
+        parent::requireKeyword($scanner, 'do');
         $scanner->next();
-        Flags::$loopDepth++;
+        Globals::$loopDepth++;
         $this->statements = CompoundStatement::smartParse($scanner, $_symTable);
-        Flags::$loopDepth--;
+        Globals::$loopDepth--;
     }
 
     public function toIdArray(&$id)
@@ -39,13 +34,13 @@ class WhileStatement extends Node
             "name" => "While-statement",
             "children" => []
         ];
-        $clause = [
+        $condition = [
             "id" => $id++,
-            "name" => "Clause",
-            "children" => [$this->clause->toIdArray($id)]
+            "name" => "Condition",
+            "children" => [$this->condition->toIdArray($id)]
         ];
         $statements = $this->statements->toIdArray($id);
-        $node["children"] = [$clause, $statements];
+        $node["children"] = [$condition, $statements];
         return $node;
     }
 }

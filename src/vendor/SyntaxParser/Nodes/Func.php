@@ -9,7 +9,7 @@ use vendor\TokenParser\Scanner;
 use vendor\Exception\SyntaxException;
 use vendor\Exception\SemanticException;
 use vendor\SemanticParser\Nodes\SymVar;
-use vendor\Utility\Flags;
+use vendor\Utility\Globals;
 
 class Func extends Proc
 {
@@ -24,9 +24,7 @@ class Func extends Proc
             $identifier,
             $symTable
         ) = parent::parseSignature($scanner, $_symTable);
-        if (!$scanner->get()->isOperator(':')) {
-            Node::simpleException($scanner, ['<OPERATOR \':\'>']);
-        }
+        parent::requireOperator($scanner, ':');
         $scanner->next();
         $type = SymType::parseFixed($scanner, $symTable);
         if ($type->isAnonim()) {

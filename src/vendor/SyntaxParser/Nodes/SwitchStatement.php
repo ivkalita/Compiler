@@ -5,7 +5,7 @@ namespace vendor\SyntaxParser\Nodes;
 use vendor\SyntaxParser\Nodes\Node;
 use vendor\SemanticParser\Nodes\SymSimpleType;
 use vendor\Exception\SemanticException;
-use vendor\Utility\Flags;
+use vendor\Utility\Globals;
 
 class SwitchStatement extends Node
 {
@@ -13,24 +13,15 @@ class SwitchStatement extends Node
     public $cases = [];
     public $default = null;
 
-    //case expr of
-    //  caseA:
-    //      statement/compound_statement
-    //  caseA:
-    //      statement/compound_statement
 
     public function __construct($scanner, $_symTable)
     {
-        if (!$scanner->get()->isKeyword('case')) {
-            parent::simpleException($scanner, ['<KEYWORD \'case\'>']);
-        }
+        parent::requireKeyword($scanner, 'case');
         $scanner->next();
         $this->clause = new Expression($scanner, $_symTable);
-        if (!$scanner->get()->isKeyword('of')) {
-            parent::simpleException($scanner, ['<KEYWORD \'of\'>']);
-        }
+        parent::requireKeyword($scanner, 'of');
         $scanner->next();
-        Flags::$switchDepth++;
+        Globals::$switchDepth++;
         while (true) {
             if ($scanner->get()->isKeyword('else')) {
                 $scanner->next();
@@ -43,9 +34,7 @@ class SwitchStatement extends Node
             if (!$class::equal($caseClause->symType, $this->clause->symType)) {
                 $caseClause = new TypeCast($caseClause, $this->clause->symType);
             }
-            if (!$scanner->get()->isOperator(':')) {
-                parent::simpleException($scanner, ['<OPERATOR \':\'>']);
-            }
+            parent::requireOperator($scanner, ':');
             $scanner->next();
             $caseStatements = CompoundStatement::smartParse($scanner, $_symTable);
             $this->cases[] = [
@@ -57,10 +46,8 @@ class SwitchStatement extends Node
                 break;
             }
         }
-        Flags::$switchDepth--;
-        if (!$scanner->get()->isKeyword('end')) {
-            parent::simpleException($scanner, ['<KEYWORD \'end\'>']);
-        }
+        Globals::$switchDepth--;
+        parent::requireKeyword($scanner, 'end');
         $scanner->next();
     }
 

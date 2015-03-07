@@ -1,0 +1,6 @@
+begin
+	case a of
+		1: 
+			begin
+
+end.
